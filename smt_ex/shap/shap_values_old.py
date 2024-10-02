@@ -38,18 +38,18 @@ def compute_shap_values(mask, s_full, weights, reference_values, model):
     return b
 
 
-def individual_shap_values(instances, model, x, is_categorical):
+def individual_shap_values(model, x_obs, x_ref, is_categorical, *, method="kernel"):
     # reference_values = get_reference_feature_values(x, is_categorical)
     shap_values = list()
 
-    for instance in instances:
-        instance = instance.reshape(1, -1)
+    for x in x_obs:
+        instance = x.reshape(1, -1)
         mask = create_mask_array(instance.shape[1])
         # mask = np.repeat(mask, 5, axis=0)
         # s_with_zero = mask * instance
         reference_values = np.ones(mask.shape)
         for i in range(len(reference_values)):
-            reference_values[i, :] = get_reference_feature_values(x, is_categorical)
+            reference_values[i, :] = get_reference_feature_values(x_ref, is_categorical)
         # s_full = (s_with_zero == 0) * reference_values + s_with_zero
         s_ref = (mask == 0) * reference_values
         s_real = (mask == 1) * instance
