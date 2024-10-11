@@ -59,8 +59,8 @@ class MixedCantileverBeam(Problem):
         ndarray[ne, 1]
             Functions values.
         """
-        Press = self.options["P"]
-        E_mod = self.options["E"]
+        Press = self.options["Press"]
+        E_mod = self.options["E_mod"]
         # I = np.int64(x[:, 0]) - 1
         Ixx = np.int64(x[:, 0])
         Leng = x[:, 1]
