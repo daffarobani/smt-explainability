@@ -6,18 +6,37 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpecFromSubplotSpec
-plt.rcParams.update({
-    "text.usetex": False,
-    "font.family": "serif",
-    "font.serif": "cmr10",
-    "axes.formatter.use_mathtext": True,
-})
+
+plt.rcParams.update(
+    {
+        "text.usetex": False,
+        "font.family": "serif",
+        "font.serif": "cmr10",
+        "axes.formatter.use_mathtext": True,
+    }
+)
 
 NOMINAL_COLORS = [
-    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
-    "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5",
-    "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5"
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+    "#aec7e8",
+    "#ffbb78",
+    "#98df8a",
+    "#ff9896",
+    "#c5b0d5",
+    "#c49c94",
+    "#f7b6d2",
+    "#c7c7c7",
+    "#dbdb8d",
+    "#9edae5",
 ]
 
 
@@ -33,9 +52,7 @@ class ShapDisplay:
     ):
         if feature_names is None:
             num_features = shap_values.shape[1]
-            feature_names = [
-                fr'$x_{i}$' for i in range(num_features)
-            ]
+            feature_names = [rf"$x_{i}$" for i in range(num_features)]
 
         self.instances = instances
         self.shap_values = shap_values
@@ -99,8 +116,12 @@ class ShapDisplay:
         else:
             instance = self.instances
             shap_values = self.shap_values
-        instance = instance.reshape(-1, )
-        shap_values = shap_values.reshape(-1, )
+        instance = instance.reshape(
+            -1,
+        )
+        shap_values = shap_values.reshape(
+            -1,
+        )
 
         if figsize is None:
             length = 6
@@ -167,7 +188,9 @@ class ShapDisplay:
                 category_args = dict()
                 if isinstance(sort_based_on_importance, dict):
                     if feature_id in sort_based_on_importance:
-                        category_args["sort_based_on_importance"] = sort_based_on_importance[feature_id]
+                        category_args["sort_based_on_importance"] = (
+                            sort_based_on_importance[feature_id]
+                        )
                     else:
                         category_args["sort_based_on_importance"] = True
                 elif isinstance(sort_based_on_importance, bool):
@@ -187,7 +210,9 @@ class ShapDisplay:
 
                 if isinstance(selected_entities, dict):
                     if feature_id in selected_entities:
-                        category_args["selected_entities"] = selected_entities[feature_id]
+                        category_args["selected_entities"] = selected_entities[
+                            feature_id
+                        ]
                     else:
                         category_args["selected_entities"] = None
                 else:
@@ -195,7 +220,9 @@ class ShapDisplay:
 
                 if isinstance(selected_entity_values, dict):
                     if feature_id in selected_entity_values:
-                        category_args["selected_entity_values"] = selected_entity_values[feature_id]
+                        category_args["selected_entity_values"] = (
+                            selected_entity_values[feature_id]
+                        )
                     else:
                         category_args["selected_entity_values"] = None
                 else:
@@ -203,7 +230,7 @@ class ShapDisplay:
 
                 categories_args[feature_id] = category_args
 
-        n_rows = int(np.ceil(len(features)/n_cols))
+        n_rows = int(np.ceil(len(features) / n_cols))
         # fig, axs = plt.subplots(n_rows, n_cols, figsize=(length, width))
         # delete empty subplot
         # fig = delete_empty_axis(len(features), fig, axs)
@@ -218,9 +245,7 @@ class ShapDisplay:
             figure_.set_size_inches(figsize[0], figsize[1])
 
         axes_ravel = axes_.ravel()
-        gs = GridSpecFromSubplotSpec(
-            n_rows, n_cols, subplot_spec=axs.get_subplotspec()
-        )
+        gs = GridSpecFromSubplotSpec(n_rows, n_cols, subplot_spec=axs.get_subplotspec())
 
         for i, spec in zip(range(len(features)), gs):
             axes_ravel[i] = figure_.add_subplot(spec)
@@ -293,7 +318,9 @@ class ShapDisplay:
 
                 if isinstance(sort_based_on_importance, dict):
                     if feature_id in sort_based_on_importance:
-                        category_args["sort_based_on_importance"] = sort_based_on_importance[feature_id]
+                        category_args["sort_based_on_importance"] = (
+                            sort_based_on_importance[feature_id]
+                        )
                     else:
                         category_args["sort_based_on_importance"] = True
                 elif isinstance(sort_based_on_importance, bool):
@@ -313,7 +340,9 @@ class ShapDisplay:
 
                 if isinstance(selected_entities, dict):
                     if feature_id in selected_entities:
-                        category_args["selected_entities"] = selected_entities[feature_id]
+                        category_args["selected_entities"] = selected_entities[
+                            feature_id
+                        ]
                     else:
                         category_args["selected_entities"] = None
                 else:
@@ -321,7 +350,9 @@ class ShapDisplay:
 
                 if isinstance(selected_entity_values, dict):
                     if feature_id in selected_entity_values:
-                        category_args["selected_entity_values"] = selected_entity_values[feature_id]
+                        category_args["selected_entity_values"] = (
+                            selected_entity_values[feature_id]
+                        )
                     else:
                         category_args["selected_entity_values"] = None
                 else:
@@ -428,13 +459,13 @@ class ShapDisplay:
             if feature_idx not in vis_feature_indexes:
                 other_feature_indexes.append(feature_idx)
 
-        cmap = plt.cm.plasma # noqa
+        cmap = plt.cm.plasma  # noqa
         cmaplist = [cmap(i) for i in range(cmap.N)]
         # create the new map
         cmap = mpl.colors.LinearSegmentedColormap.from_list(
-            'color_map', cmaplist, cmap.N
+            "color_map", cmaplist, cmap.N
         )
-        bounds = np.linspace(0, 1, n_color+1)
+        bounds = np.linspace(0, 1, n_color + 1)
         norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
         x_vals = list()
         y_vals = list()
@@ -446,7 +477,9 @@ class ShapDisplay:
             min_feature_value = self.instances[:, feature_idx].min()
             max_feature_value = self.instances[:, feature_idx].max()
             range_feature_value = max_feature_value - min_feature_value
-            color_flags_ = (self.instances[:, feature_idx] - min_feature_value) / range_feature_value
+            color_flags_ = (
+                self.instances[:, feature_idx] - min_feature_value
+            ) / range_feature_value
 
             x_vals_ = self.shap_values[:, feature_idx]
             y_vals_ = jitter_y_based_on_x(
@@ -469,21 +502,28 @@ class ShapDisplay:
             min_feature_value = self.instances[:, feature_idx].min()
             max_feature_value = self.instances[:, feature_idx].max()
             range_feature_value = max_feature_value - min_feature_value
-            color_flags_ = (self.instances[:, feature_idx] - min_feature_value) / range_feature_value
+            color_flags_ = (
+                self.instances[:, feature_idx] - min_feature_value
+            ) / range_feature_value
             x_vals_ = self.shap_values[:, feature_idx]
             for feature_idx in other_feature_indexes[1:]:
                 min_feature_value = self.instances[:, feature_idx].min()
                 max_feature_value = self.instances[:, feature_idx].max()
                 range_feature_value = max_feature_value - min_feature_value
 
-                color_flags_ = np.concatenate([
-                    color_flags_,
-                    (self.instances[:, feature_idx] - min_feature_value) / range_feature_value,
-                ])
-                x_vals_ = np.concatenate([
-                    x_vals_,
-                    self.shap_values[:, feature_idx],
-                ])
+                color_flags_ = np.concatenate(
+                    [
+                        color_flags_,
+                        (self.instances[:, feature_idx] - min_feature_value)
+                        / range_feature_value,
+                    ]
+                )
+                x_vals_ = np.concatenate(
+                    [
+                        x_vals_,
+                        self.shap_values[:, feature_idx],
+                    ]
+                )
 
             y_vals_ = jitter_y_based_on_x(
                 x_vals_,
@@ -535,14 +575,7 @@ class ShapDisplay:
         return fig
 
 
-def jitter_y_based_on_x(
-        x,
-        y,
-        num_grid,
-        min_value,
-        max_value,
-        max_strength=0.2
-):
+def jitter_y_based_on_x(x, y, num_grid, min_value, max_value, max_strength=0.2):
     delta = (max_value - min_value) / num_grid
     groups = x // delta
     prop_groups = dict()
@@ -573,15 +606,15 @@ def numeric_dependence_plot(feature_idx, ax, instances, shap_values):
 
 
 def categorical_dependence_plot(
-        feature_idx,
-        ax,
-        instances,
-        shap_values,
-        categories_args,
-        categories_map,
+    feature_idx,
+    ax,
+    instances,
+    shap_values,
+    categories_args,
+    categories_map,
 ):
-    medianprops = {'color': 'black'}
-    boxprops = {'facecolor': 'None'}
+    medianprops = {"color": "black"}
+    boxprops = {"facecolor": "None"}
 
     selected_entities_ = categories_args[feature_idx]["selected_entities"]
     selected_entity_values = categories_args[feature_idx]["selected_entity_values"]
@@ -594,7 +627,10 @@ def categorical_dependence_plot(
     if selected_entities_ is not None:
         selected_entities = np.array(selected_entities_)
     elif selected_entity_values is not None:
-        selected_entities = [get_key(value, categories_map[feature_idx]) for value in selected_entity_values]
+        selected_entities = [
+            get_key(value, categories_map[feature_idx])
+            for value in selected_entity_values
+        ]
         selected_entities = np.array(selected_entities)
     else:
         selected_entities = unique_entities
@@ -627,12 +663,16 @@ def categorical_dependence_plot(
             xtick_labels.append(categories_map[feature_idx][entity])
 
     if len(other_entities) > 0:
-        other_shap_values = shap_values[instances[:, feature_idx] == other_entities[0]][:, feature_idx]
+        other_shap_values = shap_values[instances[:, feature_idx] == other_entities[0]][
+            :, feature_idx
+        ]
         for entity in other_entities[1:]:
-            other_shap_values = np.concatenate([
-                other_shap_values,
-                shap_values[instances[:, feature_idx] == entity][:, feature_idx]
-            ])
+            other_shap_values = np.concatenate(
+                [
+                    other_shap_values,
+                    shap_values[instances[:, feature_idx] == entity][:, feature_idx],
+                ]
+            )
         disp_shap_values.append(other_shap_values)
         avg_shap_values.append(np.mean(other_shap_values))
         xtick_labels.append("Others")
@@ -654,25 +694,23 @@ def categorical_dependence_plot(
 
 
 def numeric_interaction_plot(
-        feature_i,
-        feature_j,
-        ax,
-        instances,
-        shap_values,
-        feature_names,
-        n_color,
+    feature_i,
+    feature_j,
+    ax,
+    instances,
+    shap_values,
+    feature_names,
+    n_color,
 ):
     feature_i_values = instances[:, feature_i]
     feature_j_values = instances[:, feature_j]
 
     min_feature_j = feature_j_values.min()
     max_feature_j = feature_j_values.max()
-    cmap = plt.cm.plasma # noqa
+    cmap = plt.cm.plasma  # noqa
     cmaplist = [cmap(i) for i in range(cmap.N)]
     # create the new map
-    cmap = mpl.colors.LinearSegmentedColormap.from_list(
-        'color_map', cmaplist, cmap.N
-    )
+    cmap = mpl.colors.LinearSegmentedColormap.from_list("color_map", cmaplist, cmap.N)
     bounds = np.linspace(min_feature_j, max_feature_j, n_color + 1)
     norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
@@ -690,14 +728,14 @@ def numeric_interaction_plot(
 
 
 def categorical_interaction_plot(
-        feature_i,
-        feature_j,
-        ax,
-        instances,
-        shap_values,
-        feature_names,
-        categories_args,
-        categories_map,
+    feature_i,
+    feature_j,
+    ax,
+    instances,
+    shap_values,
+    feature_names,
+    categories_args,
+    categories_map,
 ):
     feature_i_values = instances[:, feature_i]
     feature_j_values = instances[:, feature_j]
@@ -714,14 +752,19 @@ def categorical_interaction_plot(
     if selected_entities_ is not None:
         selected_entities = np.array(selected_entities_)
     elif selected_entity_values is not None:
-        selected_entities = [get_key(value, categories_map[feature_j]) for value in selected_entity_values]
+        selected_entities = [
+            get_key(value, categories_map[feature_j])
+            for value in selected_entity_values
+        ]
         selected_entities = np.array(selected_entities)
     else:
         selected_entities = unique_entities
 
     entity_importance = np.zeros(len(selected_entities))
     for entity_id, entity in enumerate(selected_entities):
-        importance = np.abs(shap_values[:, feature_j][feature_j_values == entity]).mean()
+        importance = np.abs(
+            shap_values[:, feature_j][feature_j_values == entity]
+        ).mean()
         entity_importance[entity_id] = importance
 
     if sort_based_on_importance:
@@ -742,9 +785,7 @@ def categorical_interaction_plot(
             entity_name = categories_map[feature_j][entity]
         else:
             entity_name = entity
-        handles.append(
-            mpl.patches.Patch(color=NOMINAL_COLORS[j], label=entity_name)
-        )
+        handles.append(mpl.patches.Patch(color=NOMINAL_COLORS[j], label=entity_name))
     for entity in other_entities:
         entities_color_dict[entity] = "black"
     if len(other_entities) > 0:

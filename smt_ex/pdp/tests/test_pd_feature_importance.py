@@ -1,15 +1,8 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
@@ -32,9 +25,9 @@ class TestPDFeatureImportance(SMTestCase):
         nsamples = 300
         grid_resolution = 100
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
-        y = fun(x)
+        fun(x)
 
         # sm = KRG(
         #     theta0=[1e-2] * x.shape[1],
@@ -61,13 +54,15 @@ class TestPDFeatureImportance(SMTestCase):
         grid_resolution = 100
 
         fun = MixedCantileverBeam()
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        ds = DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
-        y = fun(x)
+        fun(x)
 
         # Index for categorical features
         categorical_feature_indices = [0]
@@ -75,7 +70,8 @@ class TestPDFeatureImportance(SMTestCase):
         categories_map = dict()
         for feature_idx in categorical_feature_indices:
             categories_map[feature_idx] = {
-                i: value for i, value in enumerate(ds._design_variables[feature_idx].values)
+                i: value
+                for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
 
         # sm = MixedIntegerKrigingModel(

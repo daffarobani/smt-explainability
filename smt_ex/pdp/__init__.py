@@ -12,5 +12,5 @@ __all__ = [
     "pd_pairwise_interaction",
     "PartialDependenceDisplay",
     "PDFeatureImportanceDisplay",
-    "PDFeatureInteractionDisplay"
+    "PDFeatureInteractionDisplay",
 ]

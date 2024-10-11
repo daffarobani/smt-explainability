@@ -1,22 +1,14 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
 from smt_ex.problems import MixedCantileverBeam
 from smt_ex.shap import ShapDisplay
 
-import numpy as np
 import unittest
 
 
@@ -33,17 +25,24 @@ class TestPartialDependenceNumerical(SMTestCase):
         nsamples = 300
         n_train = int(0.8 * nsamples)
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
         y = fun(x)
-        x_tr, y_tr = x[:n_train, :], y[:n_train]
-        x_te, y_te = x[n_train:, :], y[n_train:]
+        x_tr, _y_tr = x[:n_train, :], y[:n_train]
+        x_te, _y_te = x[n_train:, :], y[n_train:]
         is_categorical = [False] * x.shape[1]
 
         feature_names = [
-            r'$S_{w}$', r'$W_{fw}$', r'$A$', r'$\Delta$',
-            r'$q$', r'$\lambda$', r'$t_{c}$', r'$N_{z}$',
-            r'$W_{dg}$', r'$W_{p}$',
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
         ]
 
         # sm = KRG(
@@ -70,11 +69,20 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="kernel",
         )
-        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
-        summary_plot = shap_explainer.summary_plot()
-        assert shap_explainer.shap_values.shape == (self.x_te.shape[0], self.x_te.shape[1])
+        shap_explainer.individual_plot(
+            index=self.index_for_individual_plot
+        )
+        shap_explainer.dependence_plot(
+            [i for i in range(self.x_te.shape[1])]
+        )
+        shap_explainer.interaction_plot(
+            self.feature_pairs_for_numerical_problem
+        )
+        shap_explainer.summary_plot()
+        assert shap_explainer.shap_values.shape == (
+            self.x_te.shape[0],
+            self.x_te.shape[1],
+        )
 
     def test_exact_shap(self):
         shap_explainer = ShapDisplay.from_surrogate_model(
@@ -84,11 +92,20 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="exact",
         )
-        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
-        summary_plot = shap_explainer.summary_plot()
-        assert shap_explainer.shap_values.shape == (self.x_te.shape[0], self.x_te.shape[1])
+        shap_explainer.individual_plot(
+            index=self.index_for_individual_plot
+        )
+        shap_explainer.dependence_plot(
+            [i for i in range(self.x_te.shape[1])]
+        )
+        shap_explainer.interaction_plot(
+            self.feature_pairs_for_numerical_problem
+        )
+        shap_explainer.summary_plot()
+        assert shap_explainer.shap_values.shape == (
+            self.x_te.shape[0],
+            self.x_te.shape[1],
+        )
 
 
 class TestPartialDependenceMixed(SMTestCase):
@@ -97,15 +114,17 @@ class TestPartialDependenceMixed(SMTestCase):
         n_train = int(0.8 * nsamples)
 
         fun = MixedCantileverBeam()
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        ds = DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
         y = fun(x)
-        x_tr, y_tr = x[:n_train, :], y[:n_train]
-        x_te, y_te = x[n_train:, :], y[n_train:]
+        x_tr, _y_tr = x[:n_train, :], y[:n_train]
+        x_te, _y_te = x[n_train:, :], y[n_train:]
 
         # Index for categorical features
         categorical_feature_indices = [0]
@@ -114,11 +133,12 @@ class TestPartialDependenceMixed(SMTestCase):
         is_categorical = [False] * x.shape[1]
         for feature_idx in categorical_feature_indices:
             categories_map[feature_idx] = {
-                i: value for i, value in enumerate(ds._design_variables[feature_idx].values)
+                i: value
+                for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
             is_categorical[feature_idx] = True
 
-        feature_names = [r'$\tilde{I}$', r'$L$', r'$S$']
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
 
         # sm = MixedIntegerKrigingModel(
         #     surrogate=KPLS(
@@ -155,15 +175,24 @@ class TestPartialDependenceMixed(SMTestCase):
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
             categories_map=self.categories_map,
-            method="kernel"
+            method="kernel",
         )
 
-        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
-        summary_plot = shap_explainer.summary_plot()
+        shap_explainer.individual_plot(
+            index=self.index_for_individual_plot
+        )
+        shap_explainer.dependence_plot(
+            [i for i in range(self.x_te.shape[1])]
+        )
+        shap_explainer.interaction_plot(
+            self.feature_pairs_for_mixed_problem
+        )
+        shap_explainer.summary_plot()
 
-        assert shap_explainer.shap_values.shape == (self.x_te.shape[0], self.x_te.shape[1])
+        assert shap_explainer.shap_values.shape == (
+            self.x_te.shape[0],
+            self.x_te.shape[1],
+        )
 
     def test_exact_shap(self):
         shap_explainer = ShapDisplay.from_surrogate_model(
@@ -173,15 +202,24 @@ class TestPartialDependenceMixed(SMTestCase):
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
             categories_map=self.categories_map,
-            method="kernel"
+            method="kernel",
         )
 
-        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
-        summary_plot = shap_explainer.summary_plot()
+        shap_explainer.individual_plot(
+            index=self.index_for_individual_plot
+        )
+        shap_explainer.dependence_plot(
+            [i for i in range(self.x_te.shape[1])]
+        )
+        shap_explainer.interaction_plot(
+            self.feature_pairs_for_mixed_problem
+        )
+        shap_explainer.summary_plot()
 
-        assert shap_explainer.shap_values.shape == (self.x_te.shape[0], self.x_te.shape[1])
+        assert shap_explainer.shap_values.shape == (
+            self.x_te.shape[0],
+            self.x_te.shape[1],
+        )
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 """Partial dependence for classification and regression models"""
+
 # Authors: Muhammad Daffa Robani
 import numpy as np
 from scipy.stats.mstats import mquantiles
@@ -6,12 +7,12 @@ from typing import Union, List, Tuple
 
 
 def grid_from_x(
-        x,
-        features,
-        percentiles,
-        grid_resolution,
-        is_categorical,
-        method,
+    x,
+    features,
+    percentiles,
+    grid_resolution,
+    is_categorical,
+    method,
 ):
     if isinstance(features, int):
         features = tuple([features])
@@ -24,7 +25,12 @@ def grid_from_x(
             axis = np.unique(x[:, i])
         elif method == "uniform":
             emp_percentiles = mquantiles(x[:, i], prob=percentiles, axis=0)
-            axis = np.linspace(emp_percentiles[0], emp_percentiles[1], num=grid_resolution, endpoint=True)
+            axis = np.linspace(
+                emp_percentiles[0],
+                emp_percentiles[1],
+                num=grid_resolution,
+                endpoint=True,
+            )
         else:
             raise ValueError("Method must be 'sample' / 'unique' / 'uniform'.")
 
@@ -38,14 +44,14 @@ def grid_from_x(
 
 
 def _partial_dependence_brute(
-        model,
-        grid_cartesian,
-        grid_values,
-        features,
-        x,
-        method,
-        sample_weight=None,
-        ratio_samples=None,
+    model,
+    grid_cartesian,
+    grid_values,
+    features,
+    x,
+    method,
+    sample_weight=None,
+    ratio_samples=None,
 ):
     if isinstance(features, int):
         features = tuple([features])
@@ -86,18 +92,18 @@ def _partial_dependence_brute(
 
 
 def partial_dependence(
-        model,
-        x,
-        features: Union[List, Tuple],
-        *,
-        sample_weight=None,
-        categorical_feature_indices: List = None,
-        percentiles=(0.05, 0.95),
-        grid_resolution=100,
-        kind="average",
-        method="uniform",
-        ratio_samples=None,
-        categories_map=None,
+    model,
+    x,
+    features: Union[List, Tuple],
+    *,
+    sample_weight=None,
+    categorical_feature_indices: List = None,
+    percentiles=(0.05, 0.95),
+    grid_resolution=100,
+    kind="average",
+    method="uniform",
+    ratio_samples=None,
+    categories_map=None,
 ):
     """
     Partial dependence.
@@ -162,14 +168,14 @@ def partial_dependence(
         )
 
         # storing values
-        pdp_result = {'grid_values': grid_values}
+        pdp_result = {"grid_values": grid_values}
         if kind == "average":
-            pdp_result['average'] = averaged_predictions
+            pdp_result["average"] = averaged_predictions
         elif kind == "individual":
-            pdp_result['individual'] = predictions
+            pdp_result["individual"] = predictions
         else:
-            pdp_result['average'] = averaged_predictions
-            pdp_result['individual'] = predictions
+            pdp_result["average"] = averaged_predictions
+            pdp_result["individual"] = predictions
 
         # if there's categorical features, store grid categories
         if isinstance(feature, int):
@@ -180,7 +186,9 @@ def partial_dependence(
 
         if has_categories == 1:
             grid_categories = []
-            for i, (is_category, grid_values_) in enumerate(zip(is_categories, grid_values)):
+            for i, (is_category, grid_values_) in enumerate(
+                zip(is_categories, grid_values)
+            ):
                 if is_category:
                     if categories_map is not None:
                         if isinstance(feature, int):
@@ -195,7 +203,7 @@ def partial_dependence(
 
                 grid_categories_ = np.array(grid_categories_)
                 grid_categories.append(grid_categories_)
-            pdp_result['grid_categories'] = grid_categories
+            pdp_result["grid_categories"] = grid_categories
 
         pdp_results.append(pdp_result)
 
@@ -250,10 +258,10 @@ def cartesian(arrays, out=None):
 
     if out is None:
         dtype = np.result_type(*arrays)  # find the most permissive dtype
-        if dtype.str[:2] != '<U':
+        if dtype.str[:2] != "<U":
             out = np.empty_like(ix, dtype=dtype)
         else:
-            out = np.empty_like(ix, dtype='object')
+            out = np.empty_like(ix, dtype="object")
 
     for n, arr in enumerate(arrays):
         out[:, n] = arrays[n][ix[:, n]]

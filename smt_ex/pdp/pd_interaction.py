@@ -6,17 +6,17 @@ from .partial_dependence import partial_dependence
 
 
 def pd_pairwise_interaction(
-        feature_pairs,
-        x,
-        model,
-        *,
-        ratio_samples=None,
-        categorical_feature_indices=None,
+    feature_pairs,
+    x,
+    model,
+    *,
+    ratio_samples=None,
+    categorical_feature_indices=None,
 ):
     if ratio_samples is None:
         x_eval = x.copy()
     else:
-        num_samples = int(ratio_samples*len(x))
+        num_samples = int(ratio_samples * len(x))
         indexes = np.random.choice(x.shape[0], size=num_samples, replace=False)
         x_eval = x[indexes]
 
@@ -43,12 +43,12 @@ def pd_pairwise_interaction(
 
 
 def pd_overall_interaction(
-        features,
-        x,
-        model,
-        *,
-        ratio_samples=None,
-        categorical_feature_indices=None,
+    features,
+    x,
+    model,
+    *,
+    ratio_samples=None,
+    categorical_feature_indices=None,
 ):
     if ratio_samples is None:
         x_eval = x.copy()
@@ -72,8 +72,12 @@ def pd_overall_interaction(
         )
         average_on_current_feature = pd_results[0]["average"]
         average_on_other_features = pd_results[1]["average"]
-        y_pred = model.predict_values(x_eval).reshape(-1, )
-        h_score = compute_h_score(y_pred, average_on_current_feature, average_on_other_features)
+        y_pred = model.predict_values(x_eval).reshape(
+            -1,
+        )
+        h_score = compute_h_score(
+            y_pred, average_on_current_feature, average_on_other_features
+        )
         h_scores.append(h_score)
 
     return h_scores
@@ -87,7 +91,7 @@ def compute_h_score(ref_values, explainer_first, explainer_second):
 
     # compute h score
     numerator = ref_values - explainer_first - explainer_second
-    numerator = (numerator ** 2).sum()
-    denominator = (ref_values ** 2).sum()
+    numerator = (numerator**2).sum()
+    denominator = (ref_values**2).sum()
     h_score = numerator / denominator
     return h_score

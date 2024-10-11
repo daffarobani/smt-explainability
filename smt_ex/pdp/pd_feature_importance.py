@@ -5,28 +5,28 @@ from .partial_dependence import partial_dependence
 def compute_pd_feature_importance(features, is_categorical, pd_results):
     importances = []
     for i, feature in enumerate(features):
-        pd = pd_results[i]['average']
+        pd = pd_results[i]["average"]
         if is_categorical[feature]:
             importance = (np.max(pd) - np.min(pd)) / 4
         else:
             k = len(pd)
             mean_pd = np.mean(pd)
-            importance = np.power(np.sum((pd - mean_pd)**2) / (k-1), 0.5)
+            importance = np.power(np.sum((pd - mean_pd) ** 2) / (k - 1), 0.5)
         importances.append(importance)
     return importances
 
 
 def pd_feature_importance(
-        model,
-        x,
-        features,
-        *,
-        sample_weight=None,
-        categorical_feature_indices=None,
-        percentiles=(0.05, 0.95),
-        grid_resolution=100,
-        method="uniform",
-        ratio_samples=None
+    model,
+    x,
+    features,
+    *,
+    sample_weight=None,
+    categorical_feature_indices=None,
+    percentiles=(0.05, 0.95),
+    grid_resolution=100,
+    method="uniform",
+    ratio_samples=None,
 ):
     pd_results = partial_dependence(
         model,

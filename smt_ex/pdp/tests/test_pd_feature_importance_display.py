@@ -5,17 +5,10 @@ from smt.sampling_methods import LHS
 from smt_ex.pdp import PDFeatureImportanceDisplay
 
 from smt.problems import MixedCantileverBeam
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 import unittest
 
@@ -32,14 +25,21 @@ class TestPDFeatureImportance(SMTestCase):
     def test_pd_feature_importance_numerical(self):
         nsamples = 300
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
-        y = fun(x)
+        fun(x)
 
         feature_names = [
-            r'$S_{w}$', r'$W_{fw}$', r'$A$', r'$\Delta$',
-            r'$q$', r'$\lambda$', r'$t_{c}$', r'$N_{z}$',
-            r'$W_{dg}$', r'$W_{p}$',
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
         ]
 
         # sm = KRG(
@@ -52,8 +52,10 @@ class TestPDFeatureImportance(SMTestCase):
         # model = sm
         model = GroundTruthModel(fun)
 
-        pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(model, x, feature_names=feature_names)
-        pdd_importance_fig = pdd_importance.plot()
+        pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
+            model, x, feature_names=feature_names
+        )
+        pdd_importance.plot()
 
         assert len(pdd_importance.feature_importances) == x.shape[1]
 
@@ -61,23 +63,26 @@ class TestPDFeatureImportance(SMTestCase):
         nsamples = 100
         fun = MixedCantileverBeam()
         # Design space
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        ds = DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
-        y = fun(x)
+        fun(x)
 
         # Name of the features
-        feature_names = [r'$\tilde{I}$', r'$L$', r'$S$']
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
         # Index for categorical features
         categorical_feature_indices = [0]
         # create mapping for the categories
         categories_map = dict()
         for feature_idx in categorical_feature_indices:
             categories_map[feature_idx] = {
-                i: value for i, value in enumerate(ds._design_variables[feature_idx].values)
+                i: value
+                for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
 
         # sm = MixedIntegerKrigingModel(
@@ -100,9 +105,12 @@ class TestPDFeatureImportance(SMTestCase):
         model = GroundTruthModel(fun)
 
         pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
-            model, x, feature_names=feature_names, categorical_feature_indices=categorical_feature_indices
+            model,
+            x,
+            feature_names=feature_names,
+            categorical_feature_indices=categorical_feature_indices,
         )
-        pdd_importance_fig = pdd_importance.plot()
+        pdd_importance.plot()
 
         assert len(pdd_importance.feature_importances) == x.shape[1]
 

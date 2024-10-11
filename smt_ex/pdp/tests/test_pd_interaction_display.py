@@ -5,17 +5,10 @@ from smt.sampling_methods import LHS
 from smt_ex.pdp import PDFeatureInteractionDisplay
 
 from smt.problems import MixedCantileverBeam
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 import unittest
 import itertools
@@ -34,14 +27,21 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
     def setUp(self):
         nsamples = 300
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
-        y = fun(x)
+        fun(x)
 
         feature_names = [
-            r'$S_{w}$', r'$W_{fw}$', r'$A$', r'$\Delta$',
-            r'$q$', r'$\lambda$', r'$t_{c}$', r'$N_{z}$',
-            r'$W_{dg}$', r'$W_{p}$',
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
         ]
 
         # sm = KRG(
@@ -62,13 +62,15 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             self.x,
             feature_names=self.feature_names,
         )
-        fig = overall_pd_interaction.plot()
+        overall_pd_interaction.plot()
         assert len(overall_pd_interaction.h_scores) == self.x.shape[1]
 
     def test_pd_pairwise_interaction(self):
-        feature_pairs = list(itertools.combinations([i for i in range(self.x.shape[1])], 2))
+        feature_pairs = list(
+            itertools.combinations([i for i in range(self.x.shape[1])], 2)
+        )
         random.shuffle(feature_pairs)
-        feature_pairs = feature_pairs[:self.num_feature_pairs]
+        feature_pairs = feature_pairs[: self.num_feature_pairs]
 
         pairwise_pd_interaction = PDFeatureInteractionDisplay.pairwise_interaction(
             self.model,
@@ -76,7 +78,7 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             feature_pairs,
             feature_names=self.feature_names,
         )
-        fig = pairwise_pd_interaction.plot()
+        pairwise_pd_interaction.plot()
         assert len(pairwise_pd_interaction.h_scores) == len(feature_pairs)
 
 
@@ -84,13 +86,15 @@ class TestPDInteractionDisplayMixed(SMTestCase):
     def setUp(self):
         nsamples = 100
         fun = MixedCantileverBeam()
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        ds = DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
-        y = fun(x)
+        fun(x)
 
         # Index for categorical features
         categorical_feature_indices = [0]
@@ -98,10 +102,11 @@ class TestPDInteractionDisplayMixed(SMTestCase):
         categories_map = dict()
         for feature_idx in categorical_feature_indices:
             categories_map[feature_idx] = {
-                i: value for i, value in enumerate(ds._design_variables[feature_idx].values)
+                i: value
+                for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
 
-        feature_names = [r'$\tilde{I}$', r'$L$', r'$S$']
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
 
         # sm = MixedIntegerKrigingModel(
         #     surrogate=KPLS(
@@ -133,15 +138,17 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             self.model,
             self.x,
             feature_names=self.feature_names,
-            categorical_feature_indices=self.categorical_feature_indices
+            categorical_feature_indices=self.categorical_feature_indices,
         )
-        fig = overall_pd_interaction.plot()
+        overall_pd_interaction.plot()
         assert len(overall_pd_interaction.h_scores) == self.x.shape[1]
 
     def test_pd_pairwise_interaction(self):
-        feature_pairs = list(itertools.combinations([i for i in range(self.x.shape[1])], 2))
+        feature_pairs = list(
+            itertools.combinations([i for i in range(self.x.shape[1])], 2)
+        )
         random.shuffle(feature_pairs)
-        feature_pairs = feature_pairs[:self.num_feature_pairs]
+        feature_pairs = feature_pairs[: self.num_feature_pairs]
 
         pairwise_pd_interaction = PDFeatureInteractionDisplay.pairwise_interaction(
             self.model,
@@ -150,7 +157,7 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        fig = pairwise_pd_interaction.plot()
+        pairwise_pd_interaction.plot()
         assert len(pairwise_pd_interaction.h_scores) == len(feature_pairs)
 
 

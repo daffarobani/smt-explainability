@@ -1,22 +1,14 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
 from smt_ex.problems import MixedCantileverBeam
 from smt_ex.shap import compute_shap_values
 
-import numpy as np
 import unittest
 
 
@@ -33,11 +25,11 @@ class TestPartialDependenceNumerical(SMTestCase):
         nsamples = 300
         n_train = int(0.8 * nsamples)
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
         y = fun(x)
-        x_tr, y_tr = x[:n_train, :], y[:n_train]
-        x_te, y_te = x[n_train:, :], y[n_train:]
+        x_tr, _y_tr = x[:n_train, :], y[:n_train]
+        x_te, _y_te = x[n_train:, :], y[n_train:]
         is_categorical = [False] * x.shape[1]
 
         # sm = KRG(
@@ -80,15 +72,17 @@ class TestPartialDependenceMixed(SMTestCase):
         n_train = int(0.8 * nsamples)
 
         fun = MixedCantileverBeam()
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
         y = fun(x)
-        x_tr, y_tr = x[:n_train, :], y[:n_train]
-        x_te, y_te = x[n_train:, :], y[n_train:]
+        x_tr, _y_tr = x[:n_train, :], y[:n_train]
+        x_te, _y_te = x[n_train:, :], y[n_train:]
 
         # Index for categorical features
         categorical_feature_indices = [0]

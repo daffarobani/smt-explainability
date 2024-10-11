@@ -1,22 +1,14 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
 from smt_ex.problems import MixedCantileverBeam
 from smt_ex.shap import ShapFeatureImportanceDisplay
 
-import numpy as np
 import unittest
 
 
@@ -32,14 +24,21 @@ class TestPartialDependenceNumerical(SMTestCase):
     def setUp(self):
         nsamples = 300
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
-        y = fun(x)
+        fun(x)
 
         feature_names = [
-            r'$S_{w}$', r'$W_{fw}$', r'$A$', r'$\Delta$',
-            r'$q$', r'$\lambda$', r'$t_{c}$', r'$N_{z}$',
-            r'$W_{dg}$', r'$W_{p}$',
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
         ]
 
         # sm = KRG(
@@ -61,7 +60,7 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="kernel",
         )
-        fig = shap_importance.plot()
+        shap_importance.plot()
         assert len(shap_importance.feature_importances) == self.x.shape[1]
 
     def test_exact_shap_feature_importance(self):
@@ -71,7 +70,7 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="exact",
         )
-        fig = shap_importance.plot()
+        shap_importance.plot()
         assert len(shap_importance.feature_importances) == self.x.shape[1]
 
 
@@ -80,13 +79,15 @@ class TestPartialDependenceMixed(SMTestCase):
         nsamples = 100
 
         fun = MixedCantileverBeam()
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
-        y = fun(x)
+        fun(x)
 
         # Index for categorical features
         categorical_feature_indices = [0]
@@ -95,7 +96,7 @@ class TestPartialDependenceMixed(SMTestCase):
         for feature_idx in categorical_feature_indices:
             is_categorical[feature_idx] = True
 
-        feature_names = [r'$\tilde{I}$', r'$L$', r'$S$']
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
 
         # sm = MixedIntegerKrigingModel(
         #     surrogate=KPLS(
@@ -127,7 +128,7 @@ class TestPartialDependenceMixed(SMTestCase):
             categorical_feature_indices=self.categorical_feature_indices,
             method="kernel",
         )
-        fig = shap_importance.plot()
+        shap_importance.plot()
         assert len(shap_importance.feature_importances) == self.x.shape[1]
 
     def test_exact_shap_feature_importance(self):
@@ -138,7 +139,7 @@ class TestPartialDependenceMixed(SMTestCase):
             categorical_feature_indices=self.categorical_feature_indices,
             method="exact",
         )
-        fig = shap_importance.plot()
+        shap_importance.plot()
         assert len(shap_importance.feature_importances) == self.x.shape[1]
 
 

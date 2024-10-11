@@ -26,14 +26,9 @@ metadata = dict(
     author_email="robani.daffa@gmail.com",
     license="BSD-3",
     classifiers=[_f for _f in CLASSIFIERS.split("\n") if _f],
-    packages=[
-        "smt_ex"
-    ],
-    install_requires=[
-        "smt==2.6.3"
-    ],
-    extras_require={
-    },
+    packages=["smt_ex"],
+    install_requires=["smt~=2.7.0"],
+    extras_require={},
     python_requires=">=3.8",
     zip_safe=False,
     # url="https://github.com/SMTorg/smt",  # use the URL to the github repo

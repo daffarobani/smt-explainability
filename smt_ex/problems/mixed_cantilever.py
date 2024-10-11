@@ -5,10 +5,11 @@ This package is distributed under New BSD license.
 Cantilever beam problem from:
 P. Saves, Y. Diouane, N. Bartoli, T. Lefebvre, and J. Morlier. A mixed-categorical correlation kernel for gaussian process, 2022
 """
+
 import numpy as np
 
 from smt.problems.problem import Problem
-from smt.utils.design_space import DesignSpace, FloatVariable, CategoricalVariable
+from smt.design_space import DesignSpace, FloatVariable, CategoricalVariable
 
 
 class MixedCantileverBeam(Problem):

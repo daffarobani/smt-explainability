@@ -9,22 +9,24 @@ class ShapFeatureImportanceDisplay:
 
     @classmethod
     def from_surrogate_model(
-            cls,
-            model,
-            x,
-            *,
-            method="kernel",
-            features=None,
-            feature_names=None,
-            categorical_feature_indices=None,
+        cls,
+        model,
+        x,
+        *,
+        method="kernel",
+        features=None,
+        feature_names=None,
+        categorical_feature_indices=None,
     ):
         if features is None:
             features = [i for i in range(x.shape[1])]
 
         if feature_names is None:
-            feature_names = [fr'$x_{i}$' for i in features]
+            feature_names = [rf"$x_{i}$" for i in features]
         elif len(feature_names) != x.shape[1]:
-            raise ValueError("Length of feature names is not the same as the number of dimensions in x.")
+            raise ValueError(
+                "Length of feature names is not the same as the number of dimensions in x."
+            )
 
         if len(features) <= x.shape[1]:
             feature_names = [feature_names[feature_idx] for feature_idx in features]
@@ -45,20 +47,25 @@ class ShapFeatureImportanceDisplay:
             is_categorical,
             method=method,
         )
-        feature_importances = np.array([feature_importances[feature_idx] for feature_idx in features])
+        feature_importances = np.array(
+            [feature_importances[feature_idx] for feature_idx in features]
+        )
 
         display = ShapFeatureImportanceDisplay(feature_importances, feature_names)
         return display
 
     def plot(self, *, figsize=None, sort=False):
         import matplotlib.pyplot as plt
+
         # from matplotlib.ticker import ScalarFormatter
-        plt.rcParams.update({
-            "text.usetex": False,
-            "font.family": "serif",
-            "font.serif": "cmr10",
-            "axes.formatter.use_mathtext": True,
-        })
+        plt.rcParams.update(
+            {
+                "text.usetex": False,
+                "font.family": "serif",
+                "font.serif": "cmr10",
+                "axes.formatter.use_mathtext": True,
+            }
+        )
 
         num_features = len(self.feature_importances)
         feature_names = np.array(self.feature_names)
@@ -73,7 +80,9 @@ class ShapFeatureImportanceDisplay:
 
         if sort:
             vis_feature_names = feature_names[np.argsort(feature_importances * -1)]
-            vis_feature_importances = feature_importances[np.argsort(feature_importances * -1)]
+            vis_feature_importances = feature_importances[
+                np.argsort(feature_importances * -1)
+            ]
         else:
             vis_feature_names = feature_names
             vis_feature_importances = feature_importances

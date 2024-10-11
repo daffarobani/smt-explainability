@@ -10,10 +10,12 @@ def compute_shap_values(model, x_obs, x_ref, is_categorical, *, method="kernel")
     n_obs = len(x_obs)
     for i in range(n_obs):
         if method == "kernel":
-            x = x_obs[i: i + 1, :].reshape(1, -1)
+            x = x_obs[i : i + 1, :].reshape(1, -1)
             shap_value = kernel_shap_values(model, x, x_ref, is_categorical)
         elif method == "exact":
-            x = x_obs[i: i + 1, :].reshape(-1,)
+            x = x_obs[i : i + 1, :].reshape(
+                -1,
+            )
             shap_value = exact_shap_values(model, x, x_ref, is_categorical)
         else:
             raise ValueError("Invalid method. It must be either 'kernel' or 'exact'.")
@@ -27,16 +29,15 @@ def kernel_shap_values(model, x, x_ref, is_categorical):
     mask = create_mask_array(num_features)
     reference_values = np.ones(mask.shape)
     for i in range(len(reference_values)):
-        reference_values[i, :] = get_reference_feature_values(
-            x_ref, is_categorical)
+        reference_values[i, :] = get_reference_feature_values(x_ref, is_categorical)
     s_ref = (mask == 0) * reference_values
     s_real = (mask == 1) * x
     s_full = s_ref + s_real
 
-    weights = np.apply_along_axis(
-        calculate_weight_for_kernel_shap, 1, mask)
+    weights = np.apply_along_axis(calculate_weight_for_kernel_shap, 1, mask)
     shap_value = weighted_least_squares_for_kernel_shap(
-        mask, s_full, weights, reference_values, model)
+        mask, s_full, weights, reference_values, model
+    )
     return shap_value
 
 
@@ -71,7 +72,9 @@ def exact_shap_values(model, x, x_ref, is_categorical):
             x_s[s, :] = x_subset
 
             # compute shapley weight
-            weight[s] = math.factorial(subset.sum()) * math.factorial(num_features - subset.sum() - 1)
+            weight[s] = math.factorial(subset.sum()) * math.factorial(
+                num_features - subset.sum() - 1
+            )
             weight[s] = weight[s] / math.factorial(num_features)
 
         f_s_with_true_f = model.predict_values(x_s_with_true_f)
@@ -85,10 +88,7 @@ def exact_shap_values(model, x, x_ref, is_categorical):
 def create_mask_array(m):
     mask = np.array(list(product(range(2), repeat=m)))
     # remove mask where all elements are 0 / 1
-    mask = mask[
-        (~np.all(mask == 0, axis=1)) &
-        (~np.all(mask == 1, axis=1))
-    ]
+    mask = mask[(~np.all(mask == 0, axis=1)) & (~np.all(mask == 1, axis=1))]
     return mask
 
 
@@ -119,7 +119,9 @@ def calculate_weight_for_kernel_shap(mask_row):
     return weight
 
 
-def weighted_least_squares_for_kernel_shap(mask, s_full, weights, reference_values, model):
+def weighted_least_squares_for_kernel_shap(
+    mask, s_full, weights, reference_values, model
+):
     y = model.predict_values(s_full)
     b0 = model.predict_values(reference_values)
     y = y - b0
@@ -128,14 +130,19 @@ def weighted_least_squares_for_kernel_shap(mask, s_full, weights, reference_valu
 
     b = np.dot(
         np.linalg.inv(np.dot(np.dot(mask.transpose(), w), mask)),
-        np.dot(np.dot(mask.transpose(), w), y)
+        np.dot(np.dot(mask.transpose(), w), y),
     )
-    b = b.reshape(-1, )
+    b = b.reshape(
+        -1,
+    )
     return b
 
 
 def generate_binary_combinations(n):
-    num_combinations = 2 ** n
-    combinations = [list(format(i, f'0{(num_combinations-1).bit_length()}b')) for i in range(num_combinations)]
+    num_combinations = 2**n
+    combinations = [
+        list(format(i, f"0{(num_combinations-1).bit_length()}b"))
+        for i in range(num_combinations)
+    ]
     combinations = np.array(combinations, dtype=int)
     return combinations

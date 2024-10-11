@@ -5,17 +5,10 @@ from smt.sampling_methods import LHS
 from smt_ex.pdp import PartialDependenceDisplay
 
 from smt.problems import MixedCantileverBeam
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
-)
-from smt.applications.mixed_integer import MixedIntegerKrigingModel
-from smt.surrogate_models import (
-    KRG,
-    KPLS,
-    MixIntKernelType,
-    MixHrcKernelType,
 )
 
 import numpy as np
@@ -37,14 +30,21 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
         grid_resolution_2d = 25
 
         fun = WingWeight()
-        sampling = LHS(xlimits=fun.xlimits, criterion='ese', random_state=1)
+        sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
-        y = fun(x)
+        fun(x)
 
         feature_names = [
-            r'$S_{w}$', r'$W_{fw}$', r'$A$', r'$\Delta$',
-            r'$q$', r'$\lambda$', r'$t_{c}$', r'$N_{z}$',
-            r'$W_{dg}$', r'$W_{p}$',
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
         ]
 
         # sm = KRG(
@@ -69,9 +69,9 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             features,
             feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_1d,
-            kind='both',
+            kind="both",
         )
-        pdd_fig = pdd.plot(centered=True)
+        pdd.plot(centered=True)
         pd_results = pdd.pd_results
 
         assert len(pd_results) == len(features)
@@ -80,7 +80,10 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             assert len(pd_results[i]["grid_values"]) == 1
             assert pd_results[i]["grid_values"][0].shape == (self.grid_resolution_1d,)
             assert pd_results[i]["average"].shape == (self.grid_resolution_1d,)
-            assert pd_results[i]["individual"].shape == (self.nsamples, self.grid_resolution_1d)
+            assert pd_results[i]["individual"].shape == (
+                self.nsamples,
+                self.grid_resolution_1d,
+            )
 
     def test_two_dimension(self):
         features = [(0, 1), (2, 3)]
@@ -92,7 +95,7 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_2d,
         )
-        pdd_fig = pdd.plot(centered=True)
+        pdd.plot(centered=True)
         pd_results = pdd.pd_results
 
         assert len(pd_results) == len(features)
@@ -100,9 +103,14 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             assert set(pd_results[i].keys()) == {"grid_values", "average"}
             assert len(pd_results[i]["grid_values"]) == 2
             for j in range(len(pd_results[i]["grid_values"])):
-                assert pd_results[i]["grid_values"][j].shape == (self.grid_resolution_2d,)
+                assert pd_results[i]["grid_values"][j].shape == (
+                    self.grid_resolution_2d,
+                )
 
-            assert pd_results[i]["average"].shape == (self.grid_resolution_2d, self.grid_resolution_2d)
+            assert pd_results[i]["average"].shape == (
+                self.grid_resolution_2d,
+                self.grid_resolution_2d,
+            )
 
 
 class TestPDInteractionDisplayMixed(SMTestCase):
@@ -112,13 +120,15 @@ class TestPDInteractionDisplayMixed(SMTestCase):
         grid_resolution_2d = 25
 
         fun = MixedCantileverBeam()
-        ds = DesignSpace([
-            CategoricalVariable(values=[str(i + 1) for i in range(12)]),
-            FloatVariable(10.0, 20.0),
-            FloatVariable(1.0, 2.0),
-        ])
+        ds = DesignSpace(
+            [
+                CategoricalVariable(values=[str(i + 1) for i in range(12)]),
+                FloatVariable(10.0, 20.0),
+                FloatVariable(1.0, 2.0),
+            ]
+        )
         x = fun.sample(nsamples)
-        y = fun(x)
+        fun(x)
 
         # Index for categorical features
         categorical_feature_indices = [0]
@@ -126,10 +136,11 @@ class TestPDInteractionDisplayMixed(SMTestCase):
         categories_map = dict()
         for feature_idx in categorical_feature_indices:
             categories_map[feature_idx] = {
-                i: value for i, value in enumerate(ds._design_variables[feature_idx].values)
+                i: value
+                for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
 
-        feature_names = [r'$\tilde{I}$', r'$L$', r'$S$']
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
 
         # sm = MixedIntegerKrigingModel(
         #     surrogate=KPLS(
@@ -172,7 +183,7 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             categories_map=self.categories_map,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        pdd_fig = pdd.plot(centered=True)
+        pdd.plot(centered=True)
 
         pd_results = pdd.pd_results
 
@@ -183,19 +194,43 @@ class TestPDInteractionDisplayMixed(SMTestCase):
 
             if feature_idx in self.categorical_feature_indices:
                 desired_grid_values = np.unique(self.x[:, feature_idx])
-                desired_grid_categories = [self.categories_map[feature_idx][val] for val in desired_grid_values]
+                desired_grid_categories = [
+                    self.categories_map[feature_idx][val] for val in desired_grid_values
+                ]
 
-                assert set(pd_results[i].keys()) == {"grid_values", "individual", "grid_categories", "average"}
+                assert set(pd_results[i].keys()) == {
+                    "grid_values",
+                    "individual",
+                    "grid_categories",
+                    "average",
+                }
                 assert len(pd_results[i]["grid_categories"]) == 1
-                np.testing.assert_array_equal(pd_results[i]["grid_values"][0], desired_grid_values)
-                assert list(pd_results[feature_idx]["grid_categories"][0]) == desired_grid_categories
+                np.testing.assert_array_equal(
+                    pd_results[i]["grid_values"][0], desired_grid_values
+                )
+                assert (
+                    list(pd_results[feature_idx]["grid_categories"][0])
+                    == desired_grid_categories
+                )
                 assert pd_results[i]["average"].shape == (len(desired_grid_values),)
-                assert pd_results[i]["individual"].shape == (self.nsamples, len(desired_grid_values))
+                assert pd_results[i]["individual"].shape == (
+                    self.nsamples,
+                    len(desired_grid_values),
+                )
 
             else:
-                assert set(pd_results[i].keys()) == {"grid_values", "individual", "average"}
-                assert pd_results[i]["grid_values"][0].shape == (self.grid_resolution_1d,)
-                assert pd_results[i]["individual"].shape == (self.nsamples, self.grid_resolution_1d)
+                assert set(pd_results[i].keys()) == {
+                    "grid_values",
+                    "individual",
+                    "average",
+                }
+                assert pd_results[i]["grid_values"][0].shape == (
+                    self.grid_resolution_1d,
+                )
+                assert pd_results[i]["individual"].shape == (
+                    self.nsamples,
+                    self.grid_resolution_1d,
+                )
                 assert pd_results[i]["average"].shape == (self.grid_resolution_1d,)
 
     def test_two_dimension(self):
@@ -210,7 +245,7 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             categories_map=self.categories_map,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        pdd_fig = pdd.plot(centered=True)
+        pdd.plot(centered=True)
 
         pd_results = pdd.pd_results
 
@@ -220,19 +255,27 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             assert len(pd_results[i]["grid_values"]) == 2
 
             cat_features = [
-                feature_idx for feature_idx in feature_pair if feature_idx in self.categorical_feature_indices
+                feature_idx
+                for feature_idx in feature_pair
+                if feature_idx in self.categorical_feature_indices
             ]
 
             if len(cat_features) > 0:
                 desired_average_shape = list()
                 for feature_idx in feature_pair:
                     if feature_idx in cat_features:
-                        desired_average_shape.append(len(np.unique(self.x[:, feature_idx])))
+                        desired_average_shape.append(
+                            len(np.unique(self.x[:, feature_idx]))
+                        )
                     else:
                         desired_average_shape.append(self.grid_resolution_2d)
                 desired_average_shape = tuple(desired_average_shape)
 
-                assert set(pd_results[i].keys()) == {"grid_values", "average", "grid_categories"}
+                assert set(pd_results[i].keys()) == {
+                    "grid_values",
+                    "average",
+                    "grid_categories",
+                }
                 assert len(pd_results[i]["grid_categories"]) == 2
                 assert pd_results[i]["average"].shape == desired_average_shape
 
@@ -240,18 +283,36 @@ class TestPDInteractionDisplayMixed(SMTestCase):
                     feature_idx = feature_pair[j]
                     if feature_idx in cat_features:
                         desired_grid_values = np.unique(self.x[:, feature_idx])
-                        desired_grid_categories = [self.categories_map[feature_idx][val] for val in desired_grid_values]
-                        np.testing.assert_array_equal(pd_results[i]["grid_values"][j], desired_grid_values)
-                        assert list(pd_results[i]["grid_categories"][j]) == desired_grid_categories
+                        desired_grid_categories = [
+                            self.categories_map[feature_idx][val]
+                            for val in desired_grid_values
+                        ]
+                        np.testing.assert_array_equal(
+                            pd_results[i]["grid_values"][j], desired_grid_values
+                        )
+                        assert (
+                            list(pd_results[i]["grid_categories"][j])
+                            == desired_grid_categories
+                        )
                     else:
-                        assert pd_results[i]["grid_values"][j].shape == (self.grid_resolution_2d,)
+                        assert pd_results[i]["grid_values"][j].shape == (
+                            self.grid_resolution_2d,
+                        )
                         assert list(pd_results[i]["grid_categories"][j]) == []
 
             else:
-                assert set(pd_results[i].keys()) == {"grid_values", "average", }
+                assert set(pd_results[i].keys()) == {
+                    "grid_values",
+                    "average",
+                }
                 for j in range(2):
-                    assert pd_results[i]["grid_values"][j].shape == (self.grid_resolution_2d,)
-                assert pd_results[i]["average"].shape == (self.grid_resolution_2d, self.grid_resolution_2d)
+                    assert pd_results[i]["grid_values"][j].shape == (
+                        self.grid_resolution_2d,
+                    )
+                assert pd_results[i]["average"].shape == (
+                    self.grid_resolution_2d,
+                    self.grid_resolution_2d,
+                )
 
 
 if __name__ == "__main__":
