@@ -69,15 +69,9 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="kernel",
         )
-        shap_explainer.individual_plot(
-            index=self.index_for_individual_plot
-        )
-        shap_explainer.dependence_plot(
-            [i for i in range(self.x_te.shape[1])]
-        )
-        shap_explainer.interaction_plot(
-            self.feature_pairs_for_numerical_problem
-        )
+        shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
         shap_explainer.summary_plot()
         assert shap_explainer.shap_values.shape == (
             self.x_te.shape[0],
@@ -92,15 +86,9 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="exact",
         )
-        shap_explainer.individual_plot(
-            index=self.index_for_individual_plot
-        )
-        shap_explainer.dependence_plot(
-            [i for i in range(self.x_te.shape[1])]
-        )
-        shap_explainer.interaction_plot(
-            self.feature_pairs_for_numerical_problem
-        )
+        shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
         shap_explainer.summary_plot()
         assert shap_explainer.shap_values.shape == (
             self.x_te.shape[0],
@@ -178,15 +166,9 @@ class TestPartialDependenceMixed(SMTestCase):
             method="kernel",
         )
 
-        shap_explainer.individual_plot(
-            index=self.index_for_individual_plot
-        )
-        shap_explainer.dependence_plot(
-            [i for i in range(self.x_te.shape[1])]
-        )
-        shap_explainer.interaction_plot(
-            self.feature_pairs_for_mixed_problem
-        )
+        shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
         shap_explainer.summary_plot()
 
         assert shap_explainer.shap_values.shape == (
@@ -205,15 +187,9 @@ class TestPartialDependenceMixed(SMTestCase):
             method="kernel",
         )
 
-        shap_explainer.individual_plot(
-            index=self.index_for_individual_plot
-        )
-        shap_explainer.dependence_plot(
-            [i for i in range(self.x_te.shape[1])]
-        )
-        shap_explainer.interaction_plot(
-            self.feature_pairs_for_mixed_problem
-        )
+        shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
         shap_explainer.summary_plot()
 
         assert shap_explainer.shap_values.shape == (

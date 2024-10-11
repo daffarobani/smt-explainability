@@ -15,9 +15,9 @@ from smt.design_space import DesignSpace, FloatVariable, CategoricalVariable
 class MixedCantileverBeam(Problem):
     def _initialize(self):
         self.options.declare("name", "MixedCantileverBeam", types=str)
-        self.options.declare("P", 50e3, types=(int, float), desc="Tip load (50 kN)")
+        self.options.declare("Press", 50e3, types=(int, float), desc="Tip load (50 kN)")
         self.options.declare(
-            "E", 200e9, types=(int, float), desc="Modulus of elast. (200 GPa)"
+            "E_mod", 200e9, types=(int, float), desc="Modulus of elast. (200 GPa)"
         )
 
     def _setup(self):
@@ -59,12 +59,12 @@ class MixedCantileverBeam(Problem):
         ndarray[ne, 1]
             Functions values.
         """
-        P = self.options["P"]
-        E = self.options["E"]
+        Press = self.options["P"]
+        E_mod = self.options["E"]
         # I = np.int64(x[:, 0]) - 1
-        I = np.int64(x[:, 0])
-        L = x[:, 1]
-        S = x[:, 2]
-        Ival = np.array([self.listI[i] for i in I])
-        y = (P * L**3) / (3 * E * S**2 * Ival)
+        Ixx = np.int64(x[:, 0])
+        Leng = x[:, 1]
+        Surf = x[:, 2]
+        Ival = np.array([self.listI[i] for i in Ixx])
+        y = (Press * Leng**3) / (3 * E_mod * Surf**2 * Ival)
         return y
