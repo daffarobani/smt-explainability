@@ -162,9 +162,6 @@ class ShapDisplay:
         ax.xaxis.set_major_formatter(formatter)
         fig.tight_layout()
 
-        # Close the figure before returning
-        plt.close(fig)
-
         return fig
 
     def dependence_plot(
@@ -290,8 +287,6 @@ class ShapDisplay:
             ax.grid(color="black", alpha=0.2)
 
         figure_.tight_layout()
-        # Close the figure before returning
-        plt.close(figure_)
 
         return figure_
 
@@ -415,8 +410,7 @@ class ShapDisplay:
             ax.grid(color="black", alpha=0.2)
 
         fig.tight_layout()
-        # Close the figure before returning
-        plt.close(fig)
+
         return fig
 
     def summary_plot(
@@ -570,8 +564,6 @@ class ShapDisplay:
 
         fig.tight_layout()
 
-        # Close the figure before returning
-        plt.close(fig)
         return fig
 
 
