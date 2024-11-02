@@ -231,9 +231,6 @@ class ShapDisplay:
                 categories_args[feature_id] = category_args
 
         n_rows = int(np.ceil(len(features) / n_cols))
-        # fig, axs = plt.subplots(n_rows, n_cols, figsize=(length, width))
-        # delete empty subplot
-        # fig = delete_empty_axis(len(features), fig, axs)
 
         _, axs = plt.subplots()
         axs.set_axis_off()
@@ -247,19 +244,14 @@ class ShapDisplay:
         axes_ravel = axes_.ravel()
         gs = GridSpecFromSubplotSpec(n_rows, n_cols, subplot_spec=axs.get_subplotspec())
 
-        for i, spec in zip(range(len(features)), gs):
-            axes_ravel[i] = figure_.add_subplot(spec)
+        for i in range(len(features)):
+            axes_ravel[i] = figure_.add_subplot(gs[i])
 
         formatter = ScalarFormatter()
         formatter.set_powerlimits((-3, 3))
 
         for i, feature_idx in enumerate(features):
-            # row = i // n_cols
             col = i % n_cols
-            # if n_rows == 1:
-            #     ax = axs[col]
-            # else:
-            #     ax = axs[row, col]
             ax = axes_ravel[i]
 
             if is_categorical[feature_idx] == 1:
