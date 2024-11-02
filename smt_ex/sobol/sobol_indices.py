@@ -158,7 +158,7 @@ class SobolIndices:
                             yci[start:, :] = self.model.predict_values(c_ij[start:, :])
 
                 vij = ((1 / self.n) * np.sum(self.ya * yci) - self.fo_2)
-                key = "x" + str(ii + 1) + "-x" + str(jj + 1)
+                key = "x" + str(ii) + "-x" + str(jj)
                 s2[key] = (vij / self.denom) - s1[ii] - s1[jj]
 
         return s2
