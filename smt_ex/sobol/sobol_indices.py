@@ -38,7 +38,7 @@ class SobolIndices:
         self.fo_2 = None
         self.denom = None
 
-    def analyze(self, first=True, total=False, second=False):
+    def analyze(self, first_order=True, total_order=False, second_order=False):
         n_samples = self.A.shape[0]
 
         ya = np.zeros(shape=[n_samples, 1])
@@ -78,15 +78,15 @@ class SobolIndices:
         self.denom = denom
 
         indices = dict()
-        if first or total:
-            first_indices, total_indices = self.calc_ft_order(first, total)
-            if first:
+        if first_order or total_order:
+            first_indices, total_indices = self.calc_ft_order(first_order, total_order)
+            if first_order:
                 indices['first'] = first_indices
-            if total:
+            if total_order:
                 indices['total'] = total_indices
 
-        if second:
-            if not first:
+        if second_order:
+            if not first_order:
                 first_indices, _ = self.calc_ft_order(True, False)
             else:
                 first_indices = indices['first']
