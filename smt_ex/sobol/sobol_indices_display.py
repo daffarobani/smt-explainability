@@ -16,9 +16,9 @@ class SobolIndicesDisplay:
         nvar,
         model,
         *,
-        first=True,
-        total=True,
-        second=False,
+        first_order=True,
+        total_order=True,
+        second_order=False,
         x_bounds=None,
         x=None,
         percentiles=(0.05, 0.95),
@@ -32,7 +32,7 @@ class SobolIndicesDisplay:
             x=x,
             percentiles=percentiles,
             n_mc=n_mc
-        ).analyze(first, total, second)
+        ).analyze(first_order, total_order, second_order)
         display = SobolIndicesDisplay(nvar, sobol_indices, feature_names)
         return display
 
