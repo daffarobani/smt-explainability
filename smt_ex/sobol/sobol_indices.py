@@ -121,7 +121,7 @@ class SobolIndices:
                     if i != (run_times - 1):
                         yci[start: stop, :] = self.model.predict_values(c_i[start: stop, :])
                     else:
-                        yci[start:, :] = self.model.predict_values(c_i[start, :])
+                        yci[start:, :] = self.model.predict_values(c_i[start:, :])
 
             if first:
                 s1[ii] = ((1 / self.n) * np.sum(self.ya * yci) - self.fo_2) / self.denom
