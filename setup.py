@@ -28,6 +28,7 @@ metadata = dict(
     classifiers=[_f for _f in CLASSIFIERS.split("\n") if _f],
     packages=["smt_ex"],
     install_requires=["smt~=2.7.0"],
+    # install_requires=['smt'],
     extras_require={},
     python_requires=">=3.8",
     zip_safe=False,
