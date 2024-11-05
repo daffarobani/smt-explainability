@@ -1,14 +1,22 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.design_space import (
+from smt.utils.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
 )
 from smt.sampling_methods import LHS
+from smt.surrogate_models import (
+    KRG,
+    KPLS,
+    MixIntKernelType,
+    MixHrcKernelType,
+)
+from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
 from smt_ex.problems import MixedCantileverBeam
 from smt_ex.shap import compute_shap_values
 
+import numpy as np
 import unittest
 
 
@@ -22,7 +30,7 @@ class GroundTruthModel:
 
 class TestPartialDependenceNumerical(SMTestCase):
     def setUp(self):
-        nsamples = 300
+        nsamples = 100
         n_train = int(0.8 * nsamples)
         fun = WingWeight()
         sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
@@ -32,14 +40,14 @@ class TestPartialDependenceNumerical(SMTestCase):
         x_te, _y_te = x[n_train:, :], y[n_train:]
         is_categorical = [False] * x.shape[1]
 
-        # sm = KRG(
-        #     theta0=[1e-2] * x.shape[1],
-        #     print_prediction=False
-        # )
-        # sm.set_training_values(x, y)
-        # sm.train()
+        sm = KRG(
+            theta0=[1e-2] * x.shape[1],
+            print_prediction=False
+        )
+        sm.set_training_values(x_tr, _y_tr)
+        sm.train()
 
-        self.model = GroundTruthModel(fun)
+        self.model = sm
         self.x_tr = x_tr
         self.x_te = x_te
         self.nsamples = nsamples
@@ -68,11 +76,11 @@ class TestPartialDependenceNumerical(SMTestCase):
 
 class TestPartialDependenceMixed(SMTestCase):
     def setUp(self):
-        nsamples = 100
+        nsamples = 50
         n_train = int(0.8 * nsamples)
 
         fun = MixedCantileverBeam()
-        DesignSpace(
+        ds = DesignSpace(
             [
                 CategoricalVariable(values=[str(i + 1) for i in range(12)]),
                 FloatVariable(10.0, 20.0),
@@ -90,23 +98,23 @@ class TestPartialDependenceMixed(SMTestCase):
         for feature_idx in categorical_feature_indices:
             is_categorical[feature_idx] = True
 
-        # sm = MixedIntegerKrigingModel(
-        #     surrogate=KPLS(
-        #         design_space=ds,
-        #         categorical_kernel=MixIntKernelType.HOMO_HSPHERE,
-        #         hierarchical_kernel=MixHrcKernelType.ARC_KERNEL,
-        #         theta0=np.array([4.43799547e-04, 4.39993134e-01, 1.59631650e+00]),
-        #         corr="squar_exp",
-        #         n_start=1,
-        #         cat_kernel_comps=[2],
-        #         n_comp=2,
-        #         print_global=False,
-        #     ),
-        # )
-        # sm.set_training_values(x, np.array(y))
-        # sm.train()
+        sm = MixedIntegerKrigingModel(
+            surrogate=KPLS(
+                design_space=ds,
+                categorical_kernel=MixIntKernelType.HOMO_HSPHERE,
+                hierarchical_kernel=MixHrcKernelType.ARC_KERNEL,
+                theta0=np.array([4.43799547e-04, 4.39993134e-01, 1.59631650e+00]),
+                corr="squar_exp",
+                n_start=1,
+                cat_kernel_comps=[2],
+                n_comp=2,
+                print_global=False,
+            ),
+        )
+        sm.set_training_values(x, np.array(y))
+        sm.train()
 
-        self.model = GroundTruthModel(fun)
+        self.model = sm
         self.x_tr = x_tr
         self.x_te = x_te
         self.nsamples = nsamples

@@ -1,14 +1,22 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.design_space import (
+from smt.utils.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
 )
 from smt.sampling_methods import LHS
+from smt.surrogate_models import (
+    KRG,
+    KPLS,
+    MixIntKernelType,
+    MixHrcKernelType,
+)
+from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
 from smt_ex.problems import MixedCantileverBeam
 from smt_ex.pdp import pd_feature_importance
 
+import numpy as np
 import unittest
 
 
@@ -22,22 +30,21 @@ class GroundTruthModel:
 
 class TestPDFeatureImportance(SMTestCase):
     def test_pd_feature_importance_numerical(self):
-        nsamples = 300
+        nsamples = 50
         grid_resolution = 100
         fun = WingWeight()
         sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
-        fun(x)
+        y = fun(x)
 
-        # sm = KRG(
-        #     theta0=[1e-2] * x.shape[1],
-        #     print_prediction=False
-        # )
-        # sm.set_training_values(x, y)
-        # sm.train()
+        sm = KRG(
+            theta0=[1e-2] * x.shape[1],
+            print_prediction=False
+        )
+        sm.set_training_values(x, y)
+        sm.train()
 
-        # model = sm
-        model = GroundTruthModel(fun)
+        model = sm
 
         features = [i for i in range(x.shape[1])]
         feature_importance = pd_feature_importance(
@@ -50,7 +57,7 @@ class TestPDFeatureImportance(SMTestCase):
         assert len(feature_importance) == len(features)
 
     def test_pd_feature_importance_mixed(self):
-        nsamples = 100
+        nsamples = 50
         grid_resolution = 100
 
         fun = MixedCantileverBeam()
@@ -62,7 +69,7 @@ class TestPDFeatureImportance(SMTestCase):
             ]
         )
         x = fun.sample(nsamples)
-        fun(x)
+        y = fun(x)
 
         # Index for categorical features
         categorical_feature_indices = [0]
@@ -74,24 +81,23 @@ class TestPDFeatureImportance(SMTestCase):
                 for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
 
-        # sm = MixedIntegerKrigingModel(
-        #     surrogate=KPLS(
-        #         design_space=ds,
-        #         categorical_kernel=MixIntKernelType.HOMO_HSPHERE,
-        #         hierarchical_kernel=MixHrcKernelType.ARC_KERNEL,
-        #         theta0=np.array([4.43799547e-04, 4.39993134e-01, 1.59631650e+00]),
-        #         corr="squar_exp",
-        #         n_start=1,
-        #         cat_kernel_comps=[2],
-        #         n_comp=2,
-        #         print_global=False,
-        #     ),
-        # )
-        # sm.set_training_values(x, np.array(y))
-        # sm.train()
+        sm = MixedIntegerKrigingModel(
+            surrogate=KPLS(
+                design_space=ds,
+                categorical_kernel=MixIntKernelType.HOMO_HSPHERE,
+                hierarchical_kernel=MixHrcKernelType.ARC_KERNEL,
+                theta0=np.array([4.43799547e-04, 4.39993134e-01, 1.59631650e+00]),
+                corr="squar_exp",
+                n_start=1,
+                cat_kernel_comps=[2],
+                n_comp=2,
+                print_global=False,
+            ),
+        )
+        sm.set_training_values(x, np.array(y))
+        sm.train()
 
-        # model = sm
-        model = GroundTruthModel(fun)
+        model = sm
 
         features = [i for i in range(x.shape[1])]
         feature_importance = pd_feature_importance(
