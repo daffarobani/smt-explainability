@@ -26,7 +26,7 @@ metadata = dict(
     author_email="robani.daffa@gmail.com",
     license="BSD-3",
     classifiers=[_f for _f in CLASSIFIERS.split("\n") if _f],
-    packages=["smt_ex"],
+    packages=["smt_explainability"],
     install_requires=["smt~=2.7.0"],
     extras_require={},
     python_requires=">=3.8",
