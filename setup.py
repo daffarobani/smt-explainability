@@ -18,7 +18,7 @@ Operating System :: MacOS
 """
 
 metadata = dict(
-    name="SMT-EX",
+    name="smt-explainability",
     version="0.1.0",
     description="",
     long_description="",
