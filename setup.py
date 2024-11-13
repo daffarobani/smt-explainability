@@ -1,38 +1,34 @@
+"""
+Author:  Mohammad Daffa Robani <robani.daffa@gmail.com>
+        Paul Saves <paul.saves@onera.fr>
+        Remi Lafage <remi.lafage@onera.fr>
+        Pramudita Satria Palar < pramsp@itb.ac.id>
+
+This package is distributed under New BSD license.
+"""
+
 from setuptools import setup
 
-CLASSIFIERS = """\
-Development Status :: 5 - Production/Stable
-Intended Audience :: Science/Research
-Intended Audience :: Developers
-License :: OSI Approved :: BSD License
-Programming Language :: C++
-Programming Language :: Python
-Programming Language :: Python :: 3
-Programming Language :: Python :: 3.8
-Programming Language :: Python :: Implementation :: CPython
-Topic :: Software Development
-Topic :: Scientific/Engineering
-Operating System :: Microsoft :: Windows
-Operating System :: Unix
-Operating System :: MacOS
-"""
+
+# Import __version__ without importing the module in setup
+exec(open("./smt-explainability/version.py").read())
 
 metadata = dict(
     name="smt-explainability",
-    version="0.1.0",
+    version=__version__,  # noqa
     description="",
     long_description="",
     author="Daffa Robani et al.",
     author_email="robani.daffa@gmail.com",
+    maintainer="Paul Saves",
+    maintainer_email="paul.saves@onera.fr",
     license="BSD-3",
     classifiers=[_f for _f in CLASSIFIERS.split("\n") if _f],
     packages=["smt_explainability"],
-    install_requires=["smt~=2.7.0"],
+    install_requires=["smt>=2.8.0","smt-design-space-ext>=0.3.0"],
     extras_require={},
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     zip_safe=False,
-    # url="https://github.com/SMTorg/smt",  # use the URL to the github repo
-    # download_url="https://github.com/SMTorg/smt/releases",
 )
 
 setup(**metadata)
