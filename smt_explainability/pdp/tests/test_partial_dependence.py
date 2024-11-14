@@ -6,8 +6,8 @@ from smt.design_space import (
 )
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.pdp import partial_dependence
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.pdp import partial_dependence
 
 import numpy as np
 import unittest
