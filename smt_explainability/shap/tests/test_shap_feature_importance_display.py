@@ -6,8 +6,8 @@ from smt.design_space import (
 )
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.shap import ShapFeatureImportanceDisplay
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.shap import ShapFeatureImportanceDisplay
 
 import unittest
 
