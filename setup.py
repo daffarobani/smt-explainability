@@ -11,7 +11,7 @@ from setuptools import setup
 
 
 # Import __version__ without importing the module in setup
-exec(open("./smt-explainability/version.py").read())
+exec(open("./smt_explainability/version.py").read())
 
 metadata = dict(
     name="smt-explainability",
