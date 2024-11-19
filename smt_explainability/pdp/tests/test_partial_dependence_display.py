@@ -13,8 +13,8 @@ from smt.surrogate_models import (
 )
 from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.pdp import partial_dependence
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.pdp import PartialDependenceDisplay
 
 import numpy as np
 import unittest
@@ -28,15 +28,29 @@ class GroundTruthModel:
         return self.fun(x)
 
 
-class TestPartialDependenceNumerical(SMTestCase):
+class TestPDInteractionDisplayNumerical(SMTestCase):
     def setUp(self):
         nsamples = 50
         grid_resolution_1d = 100
         grid_resolution_2d = 25
+
         fun = WingWeight()
         sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
         y = fun(x)
+
+        feature_names = [
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
+        ]
 
         sm = KRG(
             theta0=[1e-2] * x.shape[1],
@@ -47,19 +61,23 @@ class TestPartialDependenceNumerical(SMTestCase):
 
         self.model = sm
         self.x = x
+        self.feature_names = feature_names
         self.nsamples = nsamples
         self.grid_resolution_1d = grid_resolution_1d
         self.grid_resolution_2d = grid_resolution_2d
 
     def test_one_dimension(self):
         features = [i for i in range(self.x.shape[1])]
-        pd_results = partial_dependence(
+        pdd = PartialDependenceDisplay.from_surrogate_model(
             self.model,
             self.x,
             features,
-            kind="both",
+            feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_1d,
+            kind="both",
         )
+        pdd.plot(centered=True)
+        pd_results = pdd.pd_results
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
@@ -74,12 +92,17 @@ class TestPartialDependenceNumerical(SMTestCase):
 
     def test_two_dimension(self):
         features = [(0, 1), (2, 3)]
-        pd_results = partial_dependence(
+
+        pdd = PartialDependenceDisplay.from_surrogate_model(
             self.model,
             self.x,
             features,
+            feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_2d,
         )
+        pdd.plot(centered=True)
+        pd_results = pdd.pd_results
+
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
             assert set(pd_results[i].keys()) == {"grid_values", "average"}
@@ -95,7 +118,7 @@ class TestPartialDependenceNumerical(SMTestCase):
             )
 
 
-class TestPartialDependenceMixed(SMTestCase):
+class TestPDInteractionDisplayMixed(SMTestCase):
     def setUp(self):
         nsamples = 100
         grid_resolution_1d = 100
@@ -122,6 +145,8 @@ class TestPartialDependenceMixed(SMTestCase):
                 for i, value in enumerate(ds._design_variables[feature_idx].values)
             }
 
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
+
         sm = MixedIntegerKrigingModel(
             surrogate=KPLS(
                 design_space=ds,
@@ -142,6 +167,7 @@ class TestPartialDependenceMixed(SMTestCase):
         self.x = x
         self.categories_map = categories_map
         self.categorical_feature_indices = categorical_feature_indices
+        self.feature_names = feature_names
         self.nsamples = nsamples
         self.grid_resolution_1d = grid_resolution_1d
         self.grid_resolution_2d = grid_resolution_2d
@@ -149,15 +175,19 @@ class TestPartialDependenceMixed(SMTestCase):
     def test_one_dimension(self):
         features = [i for i in range(self.x.shape[1])]
 
-        pd_results = partial_dependence(
+        pdd = PartialDependenceDisplay.from_surrogate_model(
             self.model,
             self.x,
             features,
             kind="both",
+            feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_1d,
-            categorical_feature_indices=self.categorical_feature_indices,
             categories_map=self.categories_map,
+            categorical_feature_indices=self.categorical_feature_indices,
         )
+        pdd.plot(centered=True)
+
+        pd_results = pdd.pd_results
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
@@ -208,14 +238,18 @@ class TestPartialDependenceMixed(SMTestCase):
     def test_two_dimension(self):
         features = [(0, 1), (1, 2)]
 
-        pd_results = partial_dependence(
+        pdd = PartialDependenceDisplay.from_surrogate_model(
             self.model,
             self.x,
             features,
+            feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_2d,
-            categorical_feature_indices=self.categorical_feature_indices,
             categories_map=self.categories_map,
+            categorical_feature_indices=self.categorical_feature_indices,
         )
+        pdd.plot(centered=True)
+
+        pd_results = pdd.pd_results
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):

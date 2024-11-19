@@ -13,13 +13,11 @@ from smt.surrogate_models import (
 )
 from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.pdp import pd_overall_interaction, pd_pairwise_interaction
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.pdp import pd_feature_importance
 
 import numpy as np
-import itertools
 import unittest
-import random
 
 
 class GroundTruthModel:
@@ -30,9 +28,10 @@ class GroundTruthModel:
         return self.fun(x)
 
 
-class TestPDInteractionNumerical(SMTestCase):
-    def setUp(self):
+class TestPDFeatureImportance(SMTestCase):
+    def test_pd_feature_importance_numerical(self):
         nsamples = 50
+        grid_resolution = 100
         fun = WingWeight()
         sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
@@ -45,39 +44,22 @@ class TestPDInteractionNumerical(SMTestCase):
         sm.set_training_values(x, y)
         sm.train()
 
-        self.model = sm
-        self.x = x
-        self.num_feature_pairs = 3
+        model = sm
 
-    def test_overall_interaction(self):
-        features = [i for i in range(self.x.shape[1])]
-        overall_interaction = pd_overall_interaction(
+        features = [i for i in range(x.shape[1])]
+        feature_importance = pd_feature_importance(
+            model,
+            x,
             features,
-            self.x,
-            self.model,
+            grid_resolution=grid_resolution,
         )
 
-        assert len(overall_interaction) == len(features)
+        assert len(feature_importance) == len(features)
 
-    def test_pairwise_interaction(self):
-        feature_pairs = list(
-            itertools.combinations([i for i in range(self.x.shape[1])], 2)
-        )
-        random.shuffle(feature_pairs)
-        feature_pairs = feature_pairs[: self.num_feature_pairs]
+    def test_pd_feature_importance_mixed(self):
+        nsamples = 50
+        grid_resolution = 100
 
-        pairwise_interaction = pd_pairwise_interaction(
-            feature_pairs,
-            self.x,
-            self.model,
-        )
-
-        assert len(pairwise_interaction) == len(feature_pairs)
-
-
-class TestPDInteractionMixed(SMTestCase):
-    def setUp(self):
-        nsamples = 100
         fun = MixedCantileverBeam()
         ds = DesignSpace(
             [
@@ -115,37 +97,18 @@ class TestPDInteractionMixed(SMTestCase):
         sm.set_training_values(x, np.array(y))
         sm.train()
 
-        self.model = sm
-        self.x = x
-        self.categorical_feature_indices = categorical_feature_indices
-        self.num_feature_pairs = 3
+        model = sm
 
-    def test_overall_interaction(self):
-        features = [i for i in range(self.x.shape[1])]
-        overall_interaction = pd_overall_interaction(
+        features = [i for i in range(x.shape[1])]
+        feature_importance = pd_feature_importance(
+            model,
+            x,
             features,
-            self.x,
-            self.model,
-            categorical_feature_indices=self.categorical_feature_indices,
+            grid_resolution=grid_resolution,
+            categorical_feature_indices=categorical_feature_indices,
         )
 
-        assert len(overall_interaction) == len(features)
-
-    def test_pairwise_interaction(self):
-        feature_pairs = list(
-            itertools.combinations([i for i in range(self.x.shape[1])], 2)
-        )
-        random.shuffle(feature_pairs)
-        feature_pairs = feature_pairs[: self.num_feature_pairs]
-
-        pairwise_interaction = pd_pairwise_interaction(
-            feature_pairs,
-            self.x,
-            self.model,
-            categorical_feature_indices=self.categorical_feature_indices,
-        )
-
-        assert len(pairwise_interaction) == len(feature_pairs)
+        assert len(feature_importance) == len(features)
 
 
 if __name__ == "__main__":

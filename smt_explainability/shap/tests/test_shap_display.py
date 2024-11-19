@@ -13,8 +13,8 @@ from smt.surrogate_models import (
 )
 from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.shap import ShapDisplay
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.shap import ShapDisplay
 
 import numpy as np
 import unittest

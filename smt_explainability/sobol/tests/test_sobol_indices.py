@@ -1,7 +1,7 @@
 from smt.utils.sm_test_case import SMTestCase
 from smt.sampling_methods import LHS
 from smt.problems import WingWeight
-from smt_ex.sobol import SobolIndices
+from smt_explainability.sobol import SobolIndices
 from smt.surrogate_models import KRG
 
 import unittest

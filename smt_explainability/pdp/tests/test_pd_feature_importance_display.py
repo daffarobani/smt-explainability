@@ -13,8 +13,8 @@ from smt.surrogate_models import (
 )
 from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.shap import compute_shap_feature_importance
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.pdp import PDFeatureImportanceDisplay
 
 import numpy as np
 import unittest
@@ -28,14 +28,26 @@ class GroundTruthModel:
         return self.fun(x)
 
 
-class TestPartialDependenceNumerical(SMTestCase):
-    def setUp(self):
+class TestPDFeatureImportance(SMTestCase):
+    def test_pd_feature_importance_numerical(self):
         nsamples = 50
         fun = WingWeight()
         sampling = LHS(xlimits=fun.xlimits, criterion="ese", random_state=1)
         x = sampling(nsamples)
         y = fun(x)
-        is_categorical = [False] * x.shape[1]
+
+        feature_names = [
+            r"$S_{w}$",
+            r"$W_{fw}$",
+            r"$A$",
+            r"$\Delta$",
+            r"$q$",
+            r"$\lambda$",
+            r"$t_{c}$",
+            r"$N_{z}$",
+            r"$W_{dg}$",
+            r"$W_{p}$",
+        ]
 
         sm = KRG(
             theta0=[1e-2] * x.shape[1],
@@ -44,37 +56,19 @@ class TestPartialDependenceNumerical(SMTestCase):
         sm.set_training_values(x, y)
         sm.train()
 
-        self.model = GroundTruthModel(fun)
-        self.x = x
-        self.nsamples = nsamples
-        self.is_categorical = is_categorical
+        model = sm
 
-    def test_kernel_shap_feature_importance(self):
-        feature_importance = compute_shap_feature_importance(
-            self.x,
-            self.model,
-            self.x,
-            self.is_categorical,
-            method="kernel",
+        pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
+            model, x, feature_names=feature_names
         )
-        assert len(feature_importance) == self.x.shape[1]
+        pdd_importance.plot()
 
-    def test_exact_shap_feature_importance(self):
-        feature_importance = compute_shap_feature_importance(
-            self.x,
-            self.model,
-            self.x,
-            self.is_categorical,
-            method="exact",
-        )
-        assert len(feature_importance) == self.x.shape[1]
+        assert len(pdd_importance.feature_importances) == x.shape[1]
 
-
-class TestPartialDependenceMixed(SMTestCase):
-    def setUp(self):
+    def test_pd_feature_importance_mixed(self):
         nsamples = 100
-
         fun = MixedCantileverBeam()
+        # Design space
         ds = DesignSpace(
             [
                 CategoricalVariable(values=[str(i + 1) for i in range(12)]),
@@ -85,11 +79,17 @@ class TestPartialDependenceMixed(SMTestCase):
         x = fun.sample(nsamples)
         y = fun(x)
 
+        # Name of the features
+        feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
         # Index for categorical features
         categorical_feature_indices = [0]
-        is_categorical = [False] * x.shape[1]
+        # create mapping for the categories
+        categories_map = dict()
         for feature_idx in categorical_feature_indices:
-            is_categorical[feature_idx] = True
+            categories_map[feature_idx] = {
+                i: value
+                for i, value in enumerate(ds._design_variables[feature_idx].values)
+            }
 
         sm = MixedIntegerKrigingModel(
             surrogate=KPLS(
@@ -107,30 +107,17 @@ class TestPartialDependenceMixed(SMTestCase):
         sm.set_training_values(x, np.array(y))
         sm.train()
 
-        self.model = sm
-        self.x = x
-        self.nsamples = nsamples
-        self.is_categorical = is_categorical
+        model = sm
 
-    def test_kernel_shap_feature_importance(self):
-        feature_importance = compute_shap_feature_importance(
-            self.x,
-            self.model,
-            self.x,
-            self.is_categorical,
-            method="kernel",
+        pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
+            model,
+            x,
+            feature_names=feature_names,
+            categorical_feature_indices=categorical_feature_indices,
         )
-        assert len(feature_importance) == self.x.shape[1]
+        pdd_importance.plot()
 
-    def test_exact_shap_feature_importance(self):
-        feature_importance = compute_shap_feature_importance(
-            self.x,
-            self.model,
-            self.x,
-            self.is_categorical,
-            method="kernel",
-        )
-        assert len(feature_importance) == self.x.shape[1]
+        assert len(pdd_importance.feature_importances) == x.shape[1]
 
 
 if __name__ == "__main__":

@@ -13,13 +13,11 @@ from smt.surrogate_models import (
 )
 from smt.applications.mixed_integer import MixedIntegerKrigingModel
 from smt.problems import WingWeight
-from smt_ex.problems import MixedCantileverBeam
-from smt_ex.pdp import PDFeatureInteractionDisplay
+from smt_explainability.problems import MixedCantileverBeam
+from smt_explainability.shap import ShapFeatureImportanceDisplay
 
 import numpy as np
-import itertools
 import unittest
-import random
 
 
 class GroundTruthModel:
@@ -30,7 +28,7 @@ class GroundTruthModel:
         return self.fun(x)
 
 
-class TestPDInteractionDisplayNumerical(SMTestCase):
+class TestPartialDependenceNumerical(SMTestCase):
     def setUp(self):
         nsamples = 50
         fun = WingWeight()
@@ -60,38 +58,34 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
 
         self.model = sm
         self.x = x
-        self.num_feature_pairs = 3
+        self.nsamples = nsamples
         self.feature_names = feature_names
 
-    def test_pd_overall_interaction(self):
-        overall_pd_interaction = PDFeatureInteractionDisplay.overall_interaction(
+    def test_kernel_shap_feature_importance(self):
+        shap_importance = ShapFeatureImportanceDisplay.from_surrogate_model(
             self.model,
             self.x,
             feature_names=self.feature_names,
+            method="kernel",
         )
-        overall_pd_interaction.plot()
-        assert len(overall_pd_interaction.h_scores) == self.x.shape[1]
+        shap_importance.plot()
+        assert len(shap_importance.feature_importances) == self.x.shape[1]
 
-    def test_pd_pairwise_interaction(self):
-        feature_pairs = list(
-            itertools.combinations([i for i in range(self.x.shape[1])], 2)
-        )
-        random.shuffle(feature_pairs)
-        feature_pairs = feature_pairs[: self.num_feature_pairs]
-
-        pairwise_pd_interaction = PDFeatureInteractionDisplay.pairwise_interaction(
+    def test_exact_shap_feature_importance(self):
+        shap_importance = ShapFeatureImportanceDisplay.from_surrogate_model(
             self.model,
             self.x,
-            feature_pairs,
             feature_names=self.feature_names,
+            method="exact",
         )
-        pairwise_pd_interaction.plot()
-        assert len(pairwise_pd_interaction.h_scores) == len(feature_pairs)
+        shap_importance.plot()
+        assert len(shap_importance.feature_importances) == self.x.shape[1]
 
 
-class TestPDInteractionDisplayMixed(SMTestCase):
+class TestPartialDependenceMixed(SMTestCase):
     def setUp(self):
         nsamples = 100
+
         fun = MixedCantileverBeam()
         ds = DesignSpace(
             [
@@ -105,13 +99,10 @@ class TestPDInteractionDisplayMixed(SMTestCase):
 
         # Index for categorical features
         categorical_feature_indices = [0]
-        # create mapping for the categories
-        categories_map = dict()
+
+        is_categorical = [False] * x.shape[1]
         for feature_idx in categorical_feature_indices:
-            categories_map[feature_idx] = {
-                i: value
-                for i, value in enumerate(ds._design_variables[feature_idx].values)
-            }
+            is_categorical[feature_idx] = True
 
         feature_names = [r"$\tilde{I}$", r"$L$", r"$S$"]
 
@@ -134,35 +125,30 @@ class TestPDInteractionDisplayMixed(SMTestCase):
         self.model = sm
         self.x = x
         self.categorical_feature_indices = categorical_feature_indices
-        self.num_feature_pairs = 3
+        self.nsamples = nsamples
         self.feature_names = feature_names
 
-    def test_pd_overall_interaction(self):
-        overall_pd_interaction = PDFeatureInteractionDisplay.overall_interaction(
+    def test_kernel_shap_feature_importance(self):
+        shap_importance = ShapFeatureImportanceDisplay.from_surrogate_model(
             self.model,
             self.x,
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
+            method="kernel",
         )
-        overall_pd_interaction.plot()
-        assert len(overall_pd_interaction.h_scores) == self.x.shape[1]
+        shap_importance.plot()
+        assert len(shap_importance.feature_importances) == self.x.shape[1]
 
-    def test_pd_pairwise_interaction(self):
-        feature_pairs = list(
-            itertools.combinations([i for i in range(self.x.shape[1])], 2)
-        )
-        random.shuffle(feature_pairs)
-        feature_pairs = feature_pairs[: self.num_feature_pairs]
-
-        pairwise_pd_interaction = PDFeatureInteractionDisplay.pairwise_interaction(
+    def test_exact_shap_feature_importance(self):
+        shap_importance = ShapFeatureImportanceDisplay.from_surrogate_model(
             self.model,
             self.x,
-            feature_pairs,
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
+            method="exact",
         )
-        pairwise_pd_interaction.plot()
-        assert len(pairwise_pd_interaction.h_scores) == len(feature_pairs)
+        shap_importance.plot()
+        assert len(shap_importance.feature_importances) == self.x.shape[1]
 
 
 if __name__ == "__main__":
