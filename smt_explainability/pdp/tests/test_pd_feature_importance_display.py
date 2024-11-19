@@ -1,5 +1,5 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.utils.design_space import (
+from smt.design_space import (
     DesignSpace,
     FloatVariable,
     CategoricalVariable,
