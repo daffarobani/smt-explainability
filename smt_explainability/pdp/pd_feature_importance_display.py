@@ -41,7 +41,6 @@ class PDFeatureImportanceDisplay:
             model,
             x,
             features,
-            sample_weight=sample_weight,
             categorical_feature_indices=categorical_feature_indices,
             percentiles=percentiles,
             grid_resolution=grid_resolution,
