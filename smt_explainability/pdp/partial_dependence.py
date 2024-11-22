@@ -50,7 +50,6 @@ def _partial_dependence_brute(
     features,
     x,
     method,
-    sample_weight=None,
     ratio_samples=None,
 ):
     if isinstance(features, int):
@@ -76,7 +75,7 @@ def _partial_dependence_brute(
             pred = model.predict_values(x_eval)
         except AttributeError:
             pred = model.predict(x_eval)
-        averaged_pred = np.average(pred, weights=sample_weight)
+        averaged_pred = np.average(pred)
 
         predictions.append(pred)
         averaged_predictions.append(averaged_pred)
@@ -96,7 +95,6 @@ def partial_dependence(
     x,
     features: Union[List, Tuple],
     *,
-    sample_weight=None,
     categorical_feature_indices: List = None,
     percentiles=(0.05, 0.95),
     grid_resolution=100,
@@ -118,15 +116,6 @@ def partial_dependence(
 
 
     """
-    # to do: check if the model is fitted
-    pass
-    # to do: check if the model in SMT supports multi class multi label classification
-    pass
-    # to do: check sample weight
-
-    if sample_weight is not None:
-        pass
-
     for i, feature in enumerate(features):
         if type(feature) in [tuple, list]:
             if len(feature) == 1:
@@ -163,7 +152,6 @@ def partial_dependence(
             feature,
             x,
             method,
-            sample_weight,
             ratio_samples,
         )
 
