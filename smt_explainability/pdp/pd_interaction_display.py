@@ -3,11 +3,7 @@ import numpy as np
 
 
 class PDFeatureInteractionDisplay:
-    def __init__(
-        self,
-        h_scores,
-        feature_names,
-    ):
+    def __init__(self, h_scores, feature_names):
         self.h_scores = h_scores
         self.feature_names = feature_names
 
