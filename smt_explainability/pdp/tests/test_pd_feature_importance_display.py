@@ -1,4 +1,10 @@
 from smt.utils.sm_test_case import SMTestCase
+from smt.problems import WingWeight
+from smt.sampling_methods import LHS
+
+from smt_explainability.pdp import PDFeatureImportanceDisplay
+
+from smt.problems import MixedCantileverBeam
 from smt.design_space import (
     DesignSpace,
     FloatVariable,

@@ -1,5 +1,5 @@
 """
-Author:  Muhammad Daffa Robani <robani.daffa@gmail.com>
+Author:  Mohammad Daffa Robani <robani.daffa@gmail.com>
         Paul Saves <paul.saves@onera.fr>
         Remi Lafage <remi.lafage@onera.fr>
         Pramudita Satria Palar < pramsp@itb.ac.id>

@@ -104,7 +104,4 @@ class PDFeatureImportanceDisplay:
         ax.set_axisbelow(True)
         fig.tight_layout()
 
-        # Close the figure before returning
-        plt.close(fig)
-
         return fig
