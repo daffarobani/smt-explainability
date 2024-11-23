@@ -5,9 +5,29 @@ import numpy as np
 
 
 class PartialDependenceDisplay:
+    """
+    A class to display partial dependence plots.
+
+    Attributes:
+        pd_results (list): List of partial dependence results.
+        features (list): List of features for which partial dependence is computed.
+        feature_names (list): Names of the features.
+        is_categorical (list): List indicating whether each feature is categorical.
+        random_state (int, optional): Random state for reproducibility.
+    """
     def __init__(
         self, pd_results, *, features, feature_names, is_categorical, random_state=None
     ):
+        """
+        Initializes the PartialDependenceDisplay class with the given parameters.
+
+        Args:
+            pd_results (list): List of partial dependence results.
+            features (list): List of features for which partial dependence is computed.
+            feature_names (list): Names of the features.
+            is_categorical (list): List indicating whether each feature is categorical.
+            random_state (int, optional): Random state for reproducibility.
+        """
         self.pd_results = pd_results
         self.features = features
         self.feature_names = feature_names
@@ -29,6 +49,24 @@ class PartialDependenceDisplay:
         ratio_samples=None,
         categories_map=None,
     ):
+        """
+        Creates a PartialDependenceDisplay instance from a surrogate model.
+
+        Args:
+            model (object): The surrogate model used for predictions.
+            x (numpy.ndarray): Data used for partial dependence computation.
+            features (list): List of features for which partial dependence is computed.
+            categorical_feature_indices (list, optional): Indices of categorical features.
+            feature_names (list, optional): Names of the features.
+            percentiles (tuple, optional): Percentiles used to compute the grid for continuous features.
+            grid_resolution (int, optional): Number of points in the grid for continuous features.
+            kind (str, optional): Type of partial dependence to compute ('average', 'individual', or 'both').
+            ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+            categories_map (dict, optional): Mapping of categorical feature values to their names.
+
+        Returns:
+            PartialDependenceDisplay: An instance of PartialDependenceDisplay.
+        """
         pd_results = partial_dependence(
             model,
             x,
@@ -310,6 +348,27 @@ class PartialDependenceDisplay:
         figsize=None,
         legend_locations: Union[str, Dict] = "best",
     ):
+        """
+        Plots the partial dependence results.
+
+        Args:
+            n_cols (int, optional): Number of columns in the plot grid.
+            line_kw (dict, optional): Keyword arguments for line plots.
+            ice_lines_kw (dict, optional): Keyword arguments for ICE lines.
+            pd_line_kw (dict, optional): Keyword arguments for partial dependence lines.
+            contour_kw (dict, optional): Keyword arguments for contour plots.
+            bar_kw (dict, optional): Keyword arguments for bar plots.
+            heatmap_kw (dict, optional): Keyword arguments for heatmap plots.
+            centered (bool, optional): Whether to center the partial dependence plots.
+            pdp_lim (dict, optional): Limits for the partial dependence plots.
+            max_num_ice_lines (int, optional): Maximum number of ICE lines to plot.
+            annot_heatmap (bool, optional): Whether to annotate the heatmap.
+            figsize (tuple, optional): Size of the figure.
+            legend_locations (Union[str, dict], optional): Locations of the legends.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
         import matplotlib.pyplot as plt
         from matplotlib.gridspec import GridSpecFromSubplotSpec
 
