@@ -98,15 +98,12 @@ def create_mask_array(m):
 
 def get_reference_feature_values(x, is_categorical):
     # get reference values for each feature
-    # if the feature is categorical/ordinal -> random
+    # if the feature is categorical/ordinal -> minimum
     # else -> mean
     num_features = x.shape[1]
     reference_values = np.zeros(num_features)
     for feature_idx in range(num_features):
         if is_categorical[feature_idx]:
-            # mode = stats.mode(x[:, feature_idx], keepdims=False)[0]
-            # reference_values[feature_idx] = mode
-            # reference_values[feature_idx] = np.random.choice(x[:, feature_idx])
             reference_values[feature_idx] = np.min(x[:, feature_idx])
         else:
             mean = np.mean(x[:, feature_idx])
