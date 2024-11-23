@@ -12,6 +12,19 @@ def pd_pairwise_interaction(
     ratio_samples=None,
     categorical_feature_indices=None,
 ):
+    """
+    Computes pairwise interaction scores based on partial dependence.
+
+    Args:
+        feature_pairs (list of tuples): List of feature pairs for which interaction scores are computed.
+        x (numpy.ndarray): Data used for partial dependence computation.
+        model (object): The model used for predictions.
+        ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+        categorical_feature_indices (list, optional): Indices of categorical features.
+
+    Returns:
+        list: Computed pairwise interaction scores.
+    """
     if ratio_samples is None:
         x_eval = x.copy()
     else:
@@ -49,6 +62,19 @@ def pd_overall_interaction(
     ratio_samples=None,
     categorical_feature_indices=None,
 ):
+    """
+    Computes overall interaction scores based on partial dependence.
+
+    Args:
+        features (list): List of feature indices for which interaction scores are computed.
+        x (numpy.ndarray): Data used for partial dependence computation.
+        model (object): The model used for predictions.
+        ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+        categorical_feature_indices (list, optional): Indices of categorical features.
+
+    Returns:
+        list: Computed overall interaction scores.
+    """
     if ratio_samples is None:
         x_eval = x.copy()
     else:
