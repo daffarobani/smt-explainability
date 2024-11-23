@@ -215,6 +215,19 @@ class SobolIndices:
 
 
 def sobol_sampling(n_samples, n_var, lb, ub):
+    """
+    Generates Sobol samples within the given bounds.
+
+    Args:
+        n_samples (int): Number of samples.
+        n_var (int): Number of variables.
+        lb (numpy.ndarray): Lower bounds for the variables.
+        ub (numpy.ndarray): Upper bounds for the variables.
+
+    Returns:
+        numpy.ndarray: Generated Sobol samples.
+    """
+
     samplenorm = sobol_points(n_samples+1, n_var)
     samplenorm = samplenorm[1:, :]
 
