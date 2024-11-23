@@ -620,4 +620,7 @@ class PartialDependenceDisplay:
                     annot_heatmap,
                 )
 
+        # Close the figure before returning
+        plt.close(fig)
+
         return fig
