@@ -136,9 +136,7 @@ def weighted_least_squares_for_kernel_shap(
         np.linalg.inv(np.dot(np.dot(mask.transpose(), w), mask)),
         np.dot(np.dot(mask.transpose(), w), y),
     )
-    b = b.reshape(
-        -1,
-    )
+    b = b.reshape(-1,)
     return b
 
 
