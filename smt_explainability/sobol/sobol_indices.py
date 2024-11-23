@@ -4,9 +4,24 @@ from sobolsampling.sobol_new import sobol_points
 
 
 class SobolIndices:
+    """
+    A class to calculate Sobol sensitivity indices.
+
+    Attributes:
+        nvar (int): Number of variables.
+        model (object): The model used for predictions.
+        n (int): Number of Monte Carlo samples.
+        A (numpy.ndarray): Sample matrix A.
+        B (numpy.ndarray): Sample matrix B.
+        ya (numpy.ndarray): Model predictions for A.
+        yb (numpy.ndarray): Model predictions for B.
+        fo_2 (float): Mean of the squared model predictions.
+        denom (float): Denominator for Sobol index calculations.
+    """
+
     def __init__(
             self,
-            nvar,
+            nvar: int,
             model,
             *,
             x_bounds=None,
@@ -14,6 +29,18 @@ class SobolIndices:
             percentiles=(0.05, 0.95),
             n_mc=2e5
     ):
+        """
+        Initializes the SobolIndices class with the given parameters.
+
+        Args:
+            nvar (int): Number of variables.
+            model: The model used for predictions.
+            x_bounds (numpy.ndarray, optional): Bounds for the variables.
+            x (numpy.ndarray, optional): Data to calculate percentiles for bounds.
+            percentiles (tuple, optional): Percentiles to calculate bounds.
+            n_mc (float, optional): Number of Monte Carlo samples.
+        """
+
         self.nvar = nvar
         self.model = model
         self.n = int(n_mc)
@@ -39,6 +66,18 @@ class SobolIndices:
         self.denom = None
 
     def analyze(self, first_order=True, total_order=False, second_order=False):
+        """
+        Analyzes the Sobol indices.
+
+        Args:
+            first_order (bool, optional): Whether to calculate first order indices.
+            total_order (bool, optional): Whether to calculate total order indices.
+            second_order (bool, optional): Whether to calculate second order indices.
+
+        Returns:
+            dict: A dictionary containing the calculated indices.
+        """
+
         n_samples = self.A.shape[0]
 
         ya = np.zeros(shape=[n_samples, 1])
@@ -96,11 +135,16 @@ class SobolIndices:
 
     def calc_ft_order(self, first=True, total=False):
         """
-        Calculate first and total order Sobol Indices
+        Calculate first and total order Sobol Indices.
 
-        Return:
-            s1 (numpy array): 1st order sobol indices.
+        Args:
+            first (bool, optional): Whether to calculate first order indices.
+            total (bool, optional): Whether to calculate total order indices.
+
+        Returns:
+            list: A list containing first and total order indices.
         """
+
         s1 = np.zeros(self.nvar)
         st = np.zeros(self.nvar)
 
@@ -132,9 +176,15 @@ class SobolIndices:
 
     def calc_second_order(self, s1):
         """
-        Calculate second order indices
-        :return:
+        Calculate second order indices.
+
+        Args:
+        s1 (numpy.ndarray): First order indices.
+
+        Returns:
+        dict: A dictionary containing second order indices.
         """
+
         s2 = dict()
 
         for ii in range(self.nvar - 1):
