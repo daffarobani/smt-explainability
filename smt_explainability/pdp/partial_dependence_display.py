@@ -452,7 +452,7 @@ class PartialDependenceDisplay:
 
         for plot_idx, (axi, pd_result, kind_plot, feature_idx, cat) in enumerate(
             zip(
-                axes_.ravel(),
+                axes_ravel,
                 pd_results_,
                 kind,
                 self.features,

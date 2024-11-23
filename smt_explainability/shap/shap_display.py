@@ -238,9 +238,9 @@ class ShapDisplay:
         formatter = ScalarFormatter()
         formatter.set_powerlimits((-3, 3))
 
-        for i, feature_idx in enumerate(features):
+        for i, (feature_idx, ax) in enumerate(zip(features, axes_ravel)):
             col = i % n_cols
-            ax = axes_ravel[i]
+            # ax = axes_ravel[i]
 
             if is_categorical[feature_idx] == 1:
                 categorical_dependence_plot(
