@@ -15,13 +15,10 @@ def compute_shap_values(model, x_obs, x_ref, is_categorical, *, method=None):
     # number of observations
     n_obs = len(x_obs)
     for i in range(n_obs):
+        x = x_obs[i: i + 1, :].reshape(1, -1)
         if method == "kernel":
-            x = x_obs[i: i + 1, :].reshape(1, -1)
             shap_value = kernel_shap_values(model, x, x_ref, is_categorical)
         elif method == "exact":
-            x = x_obs[i: i + 1, :].reshape(
-                -1,
-            )
             shap_value = exact_shap_values(model, x, x_ref, is_categorical)
         else:
             raise ValueError("Invalid method. It must be either 'kernel' or 'exact'.")
@@ -49,6 +46,7 @@ def kernel_shap_values(model, x, x_ref, is_categorical):
 
 def exact_shap_values(model, x, x_ref, is_categorical):
     num_features = x_ref.shape[1]
+    x = x.reshape(num_features,)
     shap_value = np.zeros(num_features)
 
     combinations_try = generate_binary_combinations(num_features)
