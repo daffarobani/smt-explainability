@@ -15,7 +15,6 @@ class PDFeatureImportanceDisplay:
         *,
         features=None,
         feature_names=None,
-        sample_weight=None,
         categorical_feature_indices=None,
         percentiles=(0.05, 0.95),
         grid_resolution=100,
