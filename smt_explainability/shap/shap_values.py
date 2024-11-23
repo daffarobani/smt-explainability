@@ -5,6 +5,19 @@ import numpy as np
 
 
 def compute_shap_values(model, x_obs, x_ref, is_categorical, *, method=None):
+    """
+    Computes SHAP values for the given observations.
+
+    Args:
+        model: The model used for predictions.
+        x_obs (numpy.ndarray): Observations for which SHAP values are computed.
+        x_ref (numpy.ndarray): Reference data used for SHAP value computation.
+        is_categorical (list): List indicating whether each feature is categorical.
+        method (str, optional): Method to use for SHAP value computation ('kernel' or 'exact').
+
+    Returns:
+        numpy.ndarray: Computed SHAP values.
+    """
     if method is None:
         if x_ref.shape[1] > 10:
             method = "kernel"
@@ -28,6 +41,18 @@ def compute_shap_values(model, x_obs, x_ref, is_categorical, *, method=None):
 
 
 def kernel_shap_values(model, x, x_ref, is_categorical):
+    """
+    Computes SHAP values using the kernel method.
+
+    Args:
+        model: The model used for predictions.
+        x (numpy.ndarray): Single observation for which SHAP values are computed.
+        x_ref (numpy.ndarray): Reference data used for SHAP value computation.
+        is_categorical (list): List indicating whether each feature is categorical.
+
+    Returns:
+        numpy.ndarray: Computed SHAP values.
+    """
     num_features = x.shape[1]
     mask = create_mask_array(num_features)
     reference_values = np.ones(mask.shape)
@@ -45,6 +70,18 @@ def kernel_shap_values(model, x, x_ref, is_categorical):
 
 
 def exact_shap_values(model, x, x_ref, is_categorical):
+    """
+    Computes SHAP values using the exact method.
+
+    Args:
+        model: The model used for predictions.
+        x (numpy.ndarray): Single observation for which SHAP values are computed.
+        x_ref (numpy.ndarray): Reference data used for SHAP value computation.
+        is_categorical (list): List indicating whether each feature is categorical.
+
+    Returns:
+        numpy.ndarray: Computed SHAP values.
+    """
     num_features = x_ref.shape[1]
     x = x.reshape(num_features,)
     shap_value = np.zeros(num_features)
