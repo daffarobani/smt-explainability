@@ -3,7 +3,21 @@ import numpy as np
 
 
 class PDFeatureInteractionDisplay:
+    """
+    A class to display feature interactions based on partial dependence.
+
+    Attributes:
+        h_scores (list): List of computed H-scores for feature interactions.
+        feature_names (list): List of feature names.
+    """
     def __init__(self, h_scores, feature_names):
+        """
+        Initializes the PDFeatureInteractionDisplay class with the given parameters.
+
+        Args:
+            h_scores (list): List of computed H-scores for feature interactions.
+            feature_names (list): List of feature names.
+        """
         self.h_scores = h_scores
         self.feature_names = feature_names
 
@@ -18,6 +32,20 @@ class PDFeatureInteractionDisplay:
         feature_names=None,
         ratio_samples=None,
     ):
+        """
+        Creates a PDFeatureInteractionDisplay instance for overall interaction scores.
+
+        Args:
+            model (object): The model used for predictions.
+            x (numpy.ndarray): Data used for partial dependence computation.
+            features (list, optional): List of feature indices.
+            categorical_feature_indices (list, optional): Indices of categorical features.
+            feature_names (list, optional): List of feature names.
+            ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+
+        Returns:
+            PDFeatureInteractionDisplay: An instance of PDFeatureInteractionDisplay.
+        """
         if features is None:
             features = [i for i in range(x.shape[1])]
 
@@ -46,6 +74,20 @@ class PDFeatureInteractionDisplay:
         feature_names=None,
         ratio_samples=None,
     ):
+        """
+        Creates a PDFeatureInteractionDisplay instance for pairwise interaction scores.
+
+        Args:
+            model (object): The model used for predictions.
+            x (numpy.ndarray): Data used for partial dependence computation.
+            feature_pairs (list of tuples): List of feature pairs for which interaction scores are computed.
+            categorical_feature_indices (list, optional): Indices of categorical features.
+            feature_names (list, optional): List of feature names.
+            ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+
+        Returns:
+            PDFeatureInteractionDisplay: An instance of PDFeatureInteractionDisplay.
+        """
         if feature_names is None:
             feature_names = [rf"$x_{i}$" for i in range(x.shape[1])]
         interaction_feature_names = list()
@@ -69,6 +111,18 @@ class PDFeatureInteractionDisplay:
         return display
 
     def plot(self, *, figsize=None, sort=False, vert=False):
+        """
+        Plots the feature interaction scores.
+
+        Args:
+            figsize (tuple, optional): Size of the figure.
+            sort (bool, optional): Whether to sort the features by interaction scores.
+            vert (bool, optional): Whether to plot the bars vertically.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
+
         import matplotlib.pyplot as plt
 
         plt.rcParams.update(
