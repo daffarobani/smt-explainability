@@ -57,7 +57,6 @@ class ShapFeatureImportanceDisplay:
     def plot(self, *, figsize=None, sort=False):
         import matplotlib.pyplot as plt
 
-        # from matplotlib.ticker import ScalarFormatter
         plt.rcParams.update(
             {
                 "text.usetex": False,
