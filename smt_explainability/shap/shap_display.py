@@ -240,7 +240,6 @@ class ShapDisplay:
 
         for i, (feature_idx, ax) in enumerate(zip(features, axes_ravel)):
             col = i % n_cols
-            # ax = axes_ravel[i]
 
             if is_categorical[feature_idx] == 1:
                 categorical_dependence_plot(
@@ -524,7 +523,6 @@ class ShapDisplay:
                 x_vals[i],
                 y_vals[i],
                 c=color_flags[i],
-                # cmap=cmap,
                 s=8,
                 norm=norm,
             )
