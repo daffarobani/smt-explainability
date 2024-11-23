@@ -51,9 +51,13 @@ class TestSobolIndicesDisplay(SMTestCase):
             feature_names=feature_names,
         )
 
-        sobol_display.plot('first')
-        sobol_display.plot('total')
-        sobol_display.plot('second')
+        first_order_plot = sobol_display.plot('first')
+        total_order_plot = sobol_display.plot('total')
+        second_order_plot = sobol_display.plot('second')
+
+        first_order_plot.savefig("first_order_plot_xlimits.png")
+        total_order_plot.savefig("total_order_plot_xlimits.png")
+        second_order_plot.savefig("second_order_plot_xlimits.png")
 
         assert len(sobol_display.sobol_indices["first"]) == nvar
         assert len(sobol_display.sobol_indices["total"]) == nvar
@@ -105,9 +109,13 @@ class TestSobolIndicesDisplay(SMTestCase):
             feature_names=feature_names,
         )
 
-        sobol_display.plot('first')
-        sobol_display.plot('total')
-        sobol_display.plot('second')
+        first_order_plot = sobol_display.plot('first')
+        total_order_plot = sobol_display.plot('total')
+        second_order_plot = sobol_display.plot('second')
+
+        first_order_plot.savefig("first_order_plot_percentiles.png")
+        total_order_plot.savefig("total_order_plot_percentiles.png")
+        second_order_plot.savefig("second_order_plot_percentiles.png")
 
         assert len(sobol_display.sobol_indices["first"]) == nvar
         assert len(sobol_display.sobol_indices["total"]) == nvar
