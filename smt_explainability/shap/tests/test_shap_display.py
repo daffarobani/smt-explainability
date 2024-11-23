@@ -185,7 +185,8 @@ class TestPartialDependenceMixed(SMTestCase):
         )
 
         individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        dependence_plot = shap_explainer.dependence_plot(
+            [i for i in range(self.x_te.shape[1])], sort_based_on_importance=False)
         interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
         summary_plot = shap_explainer.summary_plot()
 
@@ -210,7 +211,8 @@ class TestPartialDependenceMixed(SMTestCase):
         )
 
         individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        dependence_plot = shap_explainer.dependence_plot(
+            [i for i in range(self.x_te.shape[1])], sort_based_on_importance=False)
         interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
         summary_plot = shap_explainer.summary_plot()
 
