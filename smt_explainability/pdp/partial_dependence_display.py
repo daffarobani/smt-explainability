@@ -92,22 +92,12 @@ class PartialDependenceDisplay:
             ice_lines_subsampled = preds[ice_lines_idx, :]
             # plot the subsampled ICE
             for ice_idx, ice in enumerate(ice_lines_subsampled):
-                # line_idx = np.unravel_index(
-                #     pd_plot_idx * n_total_lines_by_plot + ice_idx, self.lines_.shape
-                # )
-                # self.lines_[line_idx] = ax.plot(
-                #     feature_values, ice.ravel(), **individual_line_kw
-                # )[0]
                 ax.plot(feature_values[0], ice.ravel(), **individual_line_kw)
-            # individual_line_kw_label = individual_line_kw
-            # individual_line_kw_label['label'] = "ICE"
-            # ax.plot([], [], **individual_line_kw_label)
 
     @staticmethod
     def _plot_average_dependence(
         categorical, kind_plot, avg_preds, feature_values, ax, line_kw
     ):
-        # print(avg_preds, categorical, kind_plot)
         if categorical:
             if kind_plot == "both":
                 ax.scatter(
@@ -175,11 +165,9 @@ class PartialDependenceDisplay:
 
         if categorical:
             ax.set_xticklabels(feature_categories[0])
-        # if pd_line_kw.get("label", None) and kind != "individual" and not categorical:
-        #     ax.legend()
+
         if kind == "both":
             ax.legend(
-                # loc='upper left',
                 loc=legend_location,
                 fontsize=18,
             )
@@ -217,7 +205,6 @@ class PartialDependenceDisplay:
                     }
                 )
 
-                # default_im_kw = dict(interpolation="nearest", cmap="viridis")
                 default_im_kw = dict(interpolation="nearest", cmap="Blues")
                 im_kw = {**default_im_kw, **heatmap_kw}
 
@@ -238,8 +225,6 @@ class PartialDependenceDisplay:
                         text_kwargs = dict(ha="center", va="center", color=color)
                         text[row, col] = ax.text(col, row, text_data, **text_kwargs)
 
-                # fig = ax.figure
-                # fig.colorbar(im, ax=ax)
                 cbar = plt.colorbar(im, ax=ax)
                 cbar.set_label("Partial dependence", fontsize=14)
                 cbar.ax.tick_params(labelsize=12)
@@ -286,7 +271,7 @@ class PartialDependenceDisplay:
                 xx, yy = np.meshgrid(feature_values[0], feature_values[1])
                 z = avg_preds.T
                 cs = ax.contour(xx, yy, z, levels=z_level, linewidths=0.5, colors="k")
-                # contour_idx = np.unravel_index(pd_plot_idx, self.contours_.shape)
+
                 ax.contourf(
                     xx,
                     yy,
@@ -444,23 +429,18 @@ class PartialDependenceDisplay:
             n_ice_lines = min(n_ice_lines, max_num_ice_lines)
 
         ax.set_axis_off()
-        # bounding_ax_ = ax
         fig = ax.figure
 
         n_cols = min(n_cols, n_results)
         n_rows = int(np.ceil(n_results / float(n_cols)))
-        # self.axes_ = np.empty((n_rows, n_cols), dtype=object)
         axes_ = np.empty((n_rows, n_cols), dtype=object)
         if figsize is None:
             fig.set_size_inches(n_cols * 7, n_rows * 5)
         else:
             fig.set_size_inches(figsize[0], figsize[1])
 
-        # axes_ravel = self.axes_.ravel()
         axes_ravel = axes_.ravel()
         gs = GridSpecFromSubplotSpec(n_rows, n_cols, subplot_spec=ax.get_subplotspec())
-        # for i, spec in zip(range(n_results), gs):
-        #     axes_ravel[i] = fig.add_subplot(spec)
         for i in range(n_results):
             axes_ravel[i] = fig.add_subplot(gs[i])
 
@@ -479,7 +459,6 @@ class PartialDependenceDisplay:
                 contains_categories,
             )
         ):
-            # print(feature_idx)
             avg_preds = None
             preds = None
             feature_values = pd_result["grid_values"]
@@ -499,10 +478,6 @@ class PartialDependenceDisplay:
 
             if len(feature_values) == 1:
                 # define the line-style for the current plot
-                # default_line_kws = {
-                #     "color": "C0",
-                #     "label": "average" if kind_plot == "both" else None,
-                # }
                 default_line_kws = {
                     "color": "C0",
                     "label": "Average" if kind_plot == "both" else None,
