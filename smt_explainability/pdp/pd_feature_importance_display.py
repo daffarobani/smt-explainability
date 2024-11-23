@@ -3,7 +3,21 @@ import numpy as np
 
 
 class PDFeatureImportanceDisplay:
+    """
+    A class to display feature importances based on partial dependence.
+
+    Attributes:
+        feature_importances (list): List of computed feature importances.
+        feature_names (list): List of feature names.
+    """
     def __init__(self, feature_importances, feature_names):
+        """
+        Initializes the PDFeatureImportanceDisplay class with the given parameters.
+
+        Args:
+            feature_importances (list): List of computed feature importances.
+            feature_names (list): List of feature names.
+        """
         self.feature_importances = feature_importances
         self.feature_names = feature_names
 
@@ -21,6 +35,23 @@ class PDFeatureImportanceDisplay:
         method="uniform",
         ratio_samples=None,
     ):
+        """
+        Creates a PDFeatureImportanceDisplay instance from a surrogate model.
+
+        Args:
+            model (object): The surrogate model used for predictions.
+            x (numpy.ndarray): Data used for partial dependence computation.
+            features (list, optional): List of feature indices.
+            feature_names (list, optional): List of feature names.
+            categorical_feature_indices (list, optional): Indices of categorical features.
+            percentiles (tuple, optional): Percentiles used to compute the grid for continuous features.
+            grid_resolution (int, optional): Number of points in the grid for continuous features.
+            method (str, optional): Method to use for grid computation ('sample', 'unique', or 'uniform').
+            ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+
+        Returns:
+            PDFeatureImportanceDisplay: An instance of PDFeatureImportanceDisplay.
+        """
         if features is None:
             features = [i for i in range(x.shape[1])]
 
@@ -55,6 +86,16 @@ class PDFeatureImportanceDisplay:
         sort=False,
         figsize=None,
     ):
+        """
+        Plots the feature importances.
+
+        Args:
+            sort (bool, optional): Whether to sort the features by importance.
+            figsize (tuple, optional): Size of the figure.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
         import matplotlib.pyplot as plt
 
         plt.rcParams.update(
