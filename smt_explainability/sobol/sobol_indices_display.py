@@ -3,6 +3,13 @@ import numpy as np
 
 
 class SobolIndicesDisplay:
+    """
+    A class to display Sobol sensitivity indices.
+
+    Attributes:
+        sobol_indices (dict): Sobol indices.
+        feature_names (list): Names of the features.
+    """
     def __init__(self, nvar, sobol_indices, feature_names):
         """
         Initializes the SobolIndicesDisplay class with the given parameters.
