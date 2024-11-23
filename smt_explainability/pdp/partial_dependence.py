@@ -104,17 +104,22 @@ def partial_dependence(
     categories_map=None,
 ):
     """
-    Partial dependence.
+    Compute partial dependence.
 
-    Parameters
-    ----------
-    - model
-    -
+    Args:
+        model: The model used for predictions.
+        x (numpy.ndarray): The data on which partial dependence is computed.
+        features (Union[List, Tuple]): The features for which partial dependence is computed.
+        categorical_feature_indices (List, optional): List of indices of categorical features.
+        percentiles (tuple, optional): Percentiles used to compute the grid for continuous features.
+        grid_resolution (int, optional): Number of points in the grid for continuous features.
+        kind (str, optional): Type of partial dependence to compute ('average', 'individual', or 'both').
+        method (str, optional): Method to use for grid computation ('sample', 'unique', or 'uniform').
+        ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+        categories_map (dict, optional): Mapping of categorical feature values to their names.
 
-    Returns
-    ----------
-
-
+    Returns:
+        pdp_results (list): List of dictionaries containing partial dependence results for each feature.
     """
     for i, feature in enumerate(features):
         if type(feature) in [tuple, list]:
@@ -201,42 +206,17 @@ def partial_dependence(
 def cartesian(arrays, out=None):
     """Generate a cartesian product of input arrays.
 
-    Parameters
-    ----------
-    arrays : list of array-like
-        1-D arrays to form the cartesian product of.
-    out : ndarray of shape (M, len(arrays)), default=None
-        Array to place the cartesian product in.
+    Args:
+        arrays (list): 1-D arrays to form the cartesian product of.
+        out: Array to place the cartesian product in.
 
-    Returns
-    -------
-    out : ndarray of shape (M, len(arrays))
-        Array containing the cartesian products formed of input arrays.
-        If not provided, the `dtype` of the output array is set to the most
-        permissive `dtype` of the input arrays, according to NumPy type
-        promotion.
+    Returns:
+    out (numpy.ndarray): 2-D array containing the cartesian products formed of input arrays.
 
     Notes
     -----
     This function may not be used on more than 32 arrays
     because the underlying numpy functions do not support it.
-
-    Examples
-    --------
-    >>> from sklearn.utils.extmath import cartesian
-    >>> cartesian(([1, 2, 3], [4, 5], [6, 7]))
-    array([[1, 4, 6],
-           [1, 4, 7],
-           [1, 5, 6],
-           [1, 5, 7],
-           [2, 4, 6],
-           [2, 4, 7],
-           [2, 5, 6],
-           [2, 5, 7],
-           [3, 4, 6],
-           [3, 4, 7],
-           [3, 5, 6],
-           [3, 5, 7]])
     """
     arrays = [np.asarray(x) for x in arrays]
     shape = [len(x) for x in arrays]
