@@ -58,12 +58,13 @@ class TestPDFeatureImportance(SMTestCase):
 
         model = sm
 
-        pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
+        pd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
             model, x, feature_names=feature_names
         )
-        pdd_importance.plot()
+        pd_importance_plot = pd_importance.plot()
 
-        assert len(pdd_importance.feature_importances) == x.shape[1]
+        pd_importance_plot.savefig("test_pd_feature_importance_numerical.png")
+        assert len(pd_importance.feature_importances) == x.shape[1]
 
     def test_pd_feature_importance_mixed(self):
         nsamples = 100
@@ -109,15 +110,16 @@ class TestPDFeatureImportance(SMTestCase):
 
         model = sm
 
-        pdd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
+        pd_importance = PDFeatureImportanceDisplay.from_surrogate_model(
             model,
             x,
             feature_names=feature_names,
             categorical_feature_indices=categorical_feature_indices,
         )
-        pdd_importance.plot()
+        pd_importance_plot = pd_importance.plot()
 
-        assert len(pdd_importance.feature_importances) == x.shape[1]
+        pd_importance_plot.savefig("test_pd_feature_importance_mixed.png")
+        assert len(pd_importance.feature_importances) == x.shape[1]
 
 
 if __name__ == "__main__":
