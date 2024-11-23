@@ -1,5 +1,3 @@
-"""Partial dependence for classification and regression models"""
-
 # Authors: Muhammad Daffa Robani
 import numpy as np
 from scipy.stats.mstats import mquantiles
