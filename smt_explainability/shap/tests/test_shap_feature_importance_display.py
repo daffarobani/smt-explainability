@@ -68,8 +68,10 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="kernel",
         )
-        shap_importance.plot()
+        shap_importance_plot = shap_importance.plot()
+
         assert len(shap_importance.feature_importances) == self.x.shape[1]
+        shap_importance_plot.savefig("test_shap_feature_importance_kernel_numerical.png")
 
     def test_exact_shap_feature_importance(self):
         shap_importance = ShapFeatureImportanceDisplay.from_surrogate_model(
@@ -78,8 +80,10 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="exact",
         )
-        shap_importance.plot()
+        shap_importance_plot = shap_importance.plot()
+
         assert len(shap_importance.feature_importances) == self.x.shape[1]
+        shap_importance_plot.savefig("test_shap_feature_importance_exact_numerical.png")
 
 
 class TestPartialDependenceMixed(SMTestCase):
@@ -136,8 +140,10 @@ class TestPartialDependenceMixed(SMTestCase):
             categorical_feature_indices=self.categorical_feature_indices,
             method="kernel",
         )
-        shap_importance.plot()
+        shap_importance_plot = shap_importance.plot()
+
         assert len(shap_importance.feature_importances) == self.x.shape[1]
+        shap_importance_plot.savefig("test_shap_feature_importance_kernel_mixed.png")
 
     def test_exact_shap_feature_importance(self):
         shap_importance = ShapFeatureImportanceDisplay.from_surrogate_model(
@@ -147,8 +153,10 @@ class TestPartialDependenceMixed(SMTestCase):
             categorical_feature_indices=self.categorical_feature_indices,
             method="exact",
         )
-        shap_importance.plot()
+        shap_importance_plot = shap_importance.plot()
+
         assert len(shap_importance.feature_importances) == self.x.shape[1]
+        shap_importance_plot.savefig("test_shap_feature_importance_exact_mixed.png")
 
 
 if __name__ == "__main__":
