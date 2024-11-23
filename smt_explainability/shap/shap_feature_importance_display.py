@@ -3,7 +3,22 @@ import numpy as np
 
 
 class ShapFeatureImportanceDisplay:
+    """
+    A class to display feature importance based on SHAP values.
+
+    Attributes:
+        feature_importances (numpy.ndarray): Computed feature importance based on SHAP values.
+        feature_names (list): Names of the features.
+    """
+
     def __init__(self, feature_importances, feature_names):
+        """
+        Initializes the ShapFeatureImportanceDisplay class with the given parameters.
+
+        Args:
+            feature_importances (numpy.ndarray): Computed feature importance based on SHAP values.
+            feature_names (list): Names of the features.
+        """
         self.feature_importances = feature_importances
         self.feature_names = feature_names
 
@@ -18,6 +33,20 @@ class ShapFeatureImportanceDisplay:
         feature_names=None,
         categorical_feature_indices=None,
     ):
+        """
+        Creates a ShapFeatureImportanceDisplay instance from a surrogate model.
+
+        Args:
+            model (object): The surrogate model used for predictions.
+            x (numpy.ndarray): Data used for SHAP value computation.
+            method (str, optional): Method to use for SHAP value computation ('kernel' or 'exact').
+            features (list, optional): List of feature indices to consider.
+            feature_names (list, optional): Names of the features.
+            categorical_feature_indices (list, optional): Indices of categorical features.
+
+        Returns:
+            ShapFeatureImportanceDisplay: An instance of ShapFeatureImportanceDisplay.
+        """
         if features is None:
             features = [i for i in range(x.shape[1])]
 
@@ -55,6 +84,16 @@ class ShapFeatureImportanceDisplay:
         return display
 
     def plot(self, *, figsize=None, sort=False):
+        """
+        Plots the feature importances.
+
+        Args:
+            figsize (tuple, optional): Size of the figure.
+            sort (bool, optional): Whether to sort the feature importances.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
         import matplotlib.pyplot as plt
 
         plt.rcParams.update(
