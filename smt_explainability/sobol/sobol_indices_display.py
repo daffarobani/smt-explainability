@@ -4,6 +4,14 @@ import numpy as np
 
 class SobolIndicesDisplay:
     def __init__(self, nvar, sobol_indices, feature_names):
+        """
+        Initializes the SobolIndicesDisplay class with the given parameters.
+
+        Args:
+            nvar (int): Number of variables.
+            sobol_indices (dict): Calculated Sobol indices.
+            feature_names (list, optional): Names of the features.
+        """
         self.sobol_indices = sobol_indices
 
         if feature_names is None:
@@ -25,6 +33,25 @@ class SobolIndicesDisplay:
         n_mc=2e5,
         feature_names=None,
     ):
+        """
+        Creates a SobolIndicesDisplay instance from a surrogate model.
+
+        Args:
+            nvar (int): Number of variables.
+            model (object): The surrogate model used for predictions.
+            first_order (bool, optional): Whether to calculate first order indices.
+            total_order (bool, optional): Whether to calculate total order indices.
+            second_order (bool, optional): Whether to calculate second order indices.
+            x_bounds (numpy.ndarray, optional): Bounds for the variables.
+            x (numpy.ndarray, optional): Data to calculate percentiles for bounds.
+            percentiles (tuple, optional): Percentiles to calculate bounds.
+            n_mc (float, optional): Number of Monte Carlo samples.
+            feature_names (list, optional): Names of the features.
+
+        Returns:
+            SobolIndicesDisplay: An instance of SobolIndicesDisplay.
+        """
+
         sobol_indices = SobolIndices(
             nvar,
             model,
@@ -37,6 +64,19 @@ class SobolIndicesDisplay:
         return display
 
     def plot(self, order, *, sort=False, figsize=None, max_num_display=None):
+        """
+        Plots the Sobol indices.
+
+        Args:
+            order (str): The order of indices to plot ('first', 'total', or 'second').
+            sort (bool, optional): Whether to sort based on the Sobol indices.
+            figsize (tuple, optional): Size of the figure.
+            max_num_display (int, optional): Maximum number of indices to display.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
+
         import matplotlib.pyplot as plt
 
         plt.rcParams.update(
