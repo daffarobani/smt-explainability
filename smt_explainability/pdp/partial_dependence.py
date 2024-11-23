@@ -239,7 +239,7 @@ def cartesian(arrays, out=None):
            [3, 5, 7]])
     """
     arrays = [np.asarray(x) for x in arrays]
-    shape = (len(x) for x in arrays)
+    shape = [len(x) for x in arrays]
 
     ix = np.indices(shape)
     ix = ix.reshape(len(arrays), -1).T
