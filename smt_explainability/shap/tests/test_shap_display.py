@@ -77,14 +77,19 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="kernel",
         )
-        shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
-        shap_explainer.summary_plot()
+        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
+        summary_plot = shap_explainer.summary_plot()
+
         assert shap_explainer.shap_values.shape == (
             self.x_te.shape[0],
             self.x_te.shape[1],
         )
+        individual_plot.savefig("test_individual_plot_kernel_numerical.png")
+        dependence_plot.savefig("test_dependence_plot_kernel_numerical.png")
+        interaction_plot.savefig("test_interaction_plot_kernel_numerical.png")
+        summary_plot.savefig("test_summary_plot_kernel_numerical.png")
 
     def test_exact_shap(self):
         shap_explainer = ShapDisplay.from_surrogate_model(
@@ -94,14 +99,19 @@ class TestPartialDependenceNumerical(SMTestCase):
             feature_names=self.feature_names,
             method="exact",
         )
-        shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
-        shap_explainer.summary_plot()
+        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_numerical_problem)
+        summary_plot = shap_explainer.summary_plot()
+
         assert shap_explainer.shap_values.shape == (
             self.x_te.shape[0],
             self.x_te.shape[1],
         )
+        individual_plot.savefig("test_individual_plot_exact_numerical.png")
+        dependence_plot.savefig("test_dependence_plot_exact_numerical.png")
+        interaction_plot.savefig("test_interaction_plot_exact_numerical.png")
+        summary_plot.savefig("test_summary_plot_exact_numerical.png")
 
 
 class TestPartialDependenceMixed(SMTestCase):
@@ -174,15 +184,19 @@ class TestPartialDependenceMixed(SMTestCase):
             method="kernel",
         )
 
-        shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
-        shap_explainer.summary_plot()
+        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
+        summary_plot = shap_explainer.summary_plot()
 
         assert shap_explainer.shap_values.shape == (
             self.x_te.shape[0],
             self.x_te.shape[1],
         )
+        individual_plot.savefig("test_individual_plot_kernel_mixed.png")
+        dependence_plot.savefig("test_dependence_plot_kernel_mixed.png")
+        interaction_plot.savefig("test_interaction_plot_kernel_mixed.png")
+        summary_plot.savefig("test_summary_plot_kernel_mixed.png")
 
     def test_exact_shap(self):
         shap_explainer = ShapDisplay.from_surrogate_model(
@@ -195,15 +209,19 @@ class TestPartialDependenceMixed(SMTestCase):
             method="kernel",
         )
 
-        shap_explainer.individual_plot(index=self.index_for_individual_plot)
-        shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
-        shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
-        shap_explainer.summary_plot()
+        individual_plot = shap_explainer.individual_plot(index=self.index_for_individual_plot)
+        dependence_plot = shap_explainer.dependence_plot([i for i in range(self.x_te.shape[1])])
+        interaction_plot = shap_explainer.interaction_plot(self.feature_pairs_for_mixed_problem)
+        summary_plot = shap_explainer.summary_plot()
 
         assert shap_explainer.shap_values.shape == (
             self.x_te.shape[0],
             self.x_te.shape[1],
         )
+        individual_plot.savefig("test_individual_plot_exact_mixed.png")
+        dependence_plot.savefig("test_dependence_plot_exact_mixed.png")
+        interaction_plot.savefig("test_interaction_plot_exact_mixed.png")
+        summary_plot.savefig("test_summary_plot_exact_mixed.png")
 
 
 if __name__ == "__main__":
