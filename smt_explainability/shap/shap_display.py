@@ -25,6 +25,16 @@ NOMINAL_COLORS = [
 
 
 class ShapDisplay:
+    """
+    A class to display SHAP values.
+
+    Attributes:
+        instances (numpy.ndarray): Instances for which SHAP values are computed.
+        shap_values (numpy.ndarray): Computed SHAP values.
+        feature_names (list): Names of the features.
+        is_categorical (list): List indicating whether each feature is categorical.
+        categories_map (dict, optional): Mapping of categorical feature values to their names.
+    """
     def __init__(
         self,
         instances,
@@ -34,6 +44,16 @@ class ShapDisplay:
         feature_names=None,
         categories_map=None,
     ):
+        """
+        Initializes the ShapDisplay class with the given parameters.
+
+        Args:
+            instances (numpy.ndarray): Instances for which SHAP values are computed.
+            shap_values (numpy.ndarray): Computed SHAP values.
+            is_categorical (list): List indicating whether each feature is categorical.
+            feature_names (list, optional): Names of the features.
+            categories_map (dict, optional): Mapping of categorical feature values to their names.
+        """
         if feature_names is None:
             num_features = shap_values.shape[1]
             feature_names = [rf"$x_{i}$" for i in range(num_features)]
@@ -56,6 +76,21 @@ class ShapDisplay:
         categorical_feature_indices=None,
         categories_map=None,
     ):
+        """
+        Creates a ShapDisplay instance from a surrogate model.
+
+        Args:
+            instances (numpy.ndarray): Instances for which SHAP values are computed.
+            model (object): The surrogate model used for predictions.
+            x (numpy.ndarray): Reference data used for SHAP value computation.
+            method (str, optional): Method to use for SHAP value computation ('kernel' or 'exact').
+            feature_names (list, optional): Names of the features.
+            categorical_feature_indices (list, optional): Indices of categorical features.
+            categories_map (dict, optional): Mapping of categorical feature values to their names.
+
+        Returns:
+            ShapDisplay: An instance of ShapDisplay.
+        """
         num_features = x.shape[1]
 
         if method is None:
@@ -87,12 +122,17 @@ class ShapDisplay:
         )
         return display
 
-    def individual_plot(
-        self,
-        *,
-        index=None,
-        figsize=None,
-    ):
+    def individual_plot(self, *, index=None, figsize=None):
+        """
+        Plots individual SHAP values for a single instance.
+
+        Args:
+            index (int, optional): Index of the instance to plot.
+            figsize (tuple, optional): Size of the figure.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
         num_features = self.shap_values.shape[1]
         feature_names = self.feature_names
         is_categorical = self.is_categorical
@@ -107,12 +147,8 @@ class ShapDisplay:
         else:
             instance = self.instances
             shap_values = self.shap_values
-        instance = instance.reshape(
-            -1,
-        )
-        shap_values = shap_values.reshape(
-            -1,
-        )
+        instance = instance.reshape(-1,)
+        shap_values = shap_values.reshape(-1,)
 
         if figsize is None:
             length = 6
@@ -166,6 +202,22 @@ class ShapDisplay:
         selected_entities=None,
         selected_entity_values=None,
     ):
+        """
+        Plots dependence of SHAP values on feature values.
+
+        Args:
+            features (list): List of feature indices to plot.
+            n_cols (int, optional): Number of columns in the plot grid.
+            figsize (tuple, optional): Size of the figure.
+            sort_based_on_importance (Union[bool, dict], optional): Whether to sort features based on importance.
+            max_num_entities (Union[int, dict], optional): Maximum number of entities to display.
+            selected_entities (dict, optional): Selected entities for categorical features.
+            selected_entity_values (dict, optional): Selected entity values for categorical features.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
+
         is_categorical = self.is_categorical
         categories_map = self.categories_map
 
@@ -284,6 +336,22 @@ class ShapDisplay:
         selected_entities=None,
         selected_entity_values=None,
     ):
+        """
+        Plots SHAP values between feature pairs.
+
+        Args:
+            feature_pairs (list): List of feature pairs to plot.
+            n_cols (int, optional): Number of columns in the plot grid.
+            n_color (int, optional): Number of colors in the color map.
+            figsize (tuple, optional): Size of the figure.
+            sort_based_on_importance (Union[bool, dict], optional): Whether to sort features based on importance.
+            max_num_entities (Union[int, dict], optional): Maximum number of entities to display.
+            selected_entities (dict, optional): Selected entities for categorical features.
+            selected_entity_values (dict, optional): Selected entity values for categorical features.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
         is_categorical = self.is_categorical
         categories_map = self.categories_map
 
@@ -403,6 +471,18 @@ class ShapDisplay:
         include_cat=False,
         max_num_features=10,
     ):
+        """
+        Plots a summary of SHAP values.
+
+        Args:
+            figsize (tuple, optional): Size of the figure.
+            n_color (int, optional): Number of colors in the color map.
+            include_cat (bool, optional): Whether to include categorical features.
+            max_num_features (int, optional): Maximum number of features to display.
+
+        Returns:
+            matplotlib.figure.Figure: The generated plot.
+        """
         num_features = self.shap_values.shape[1]
         feature_names = np.array(self.feature_names)
         feature_indexes = np.arange(num_features)
