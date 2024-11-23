@@ -1,10 +1,4 @@
 from smt.utils.sm_test_case import SMTestCase
-from smt.problems import WingWeight
-from smt.sampling_methods import LHS
-
-from smt_explainability.pdp import PartialDependenceDisplay
-
-from smt.problems import MixedCantileverBeam
 from smt.design_space import (
     DesignSpace,
     FloatVariable,
@@ -82,8 +76,10 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             grid_resolution=self.grid_resolution_1d,
             kind="both",
         )
-        pdd.plot(centered=True)
+        pdd_plot = pdd.plot(centered=True)
         pd_results = pdd.pd_results
+
+        pdd_plot.savefig("test_pdp_numerical_one_dimension.png")
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
@@ -106,8 +102,9 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             feature_names=self.feature_names,
             grid_resolution=self.grid_resolution_2d,
         )
-        pdd.plot(centered=True)
+        pdd_plot = pdd.plot(centered=True)
         pd_results = pdd.pd_results
+        pdd_plot.savefig("test_pdp_numerical_two_dimension.png")
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
@@ -191,9 +188,9 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             categories_map=self.categories_map,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        pdd.plot(centered=True)
-
+        pdd_plot = pdd.plot(centered=True)
         pd_results = pdd.pd_results
+        pdd_plot.savefig("test_pdp_mixed_one_dimension.png")
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
@@ -253,9 +250,9 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             categories_map=self.categories_map,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        pdd.plot(centered=True)
-
+        pdd_plot = pdd.plot(centered=True)
         pd_results = pdd.pd_results
+        pdd_plot.savefig("test_pdp_mixed_two_dimension.png")
 
         assert len(pd_results) == len(features)
         for i in range(len(pd_results)):
