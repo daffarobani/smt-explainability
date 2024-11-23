@@ -70,7 +70,9 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             self.x,
             feature_names=self.feature_names,
         )
-        overall_pd_interaction.plot()
+        overall_plot = overall_pd_interaction.plot()
+
+        overall_plot.savefig("test_pd_overall_interaction_numerical.png")
         assert len(overall_pd_interaction.h_scores) == self.x.shape[1]
 
     def test_pd_pairwise_interaction(self):
@@ -86,7 +88,9 @@ class TestPDInteractionDisplayNumerical(SMTestCase):
             feature_pairs,
             feature_names=self.feature_names,
         )
-        pairwise_pd_interaction.plot()
+        pairwise_plot = pairwise_pd_interaction.plot()
+
+        pairwise_plot.savefig("test_pd_pairwise_interaction_numerical.png")
         assert len(pairwise_pd_interaction.h_scores) == len(feature_pairs)
 
 
@@ -145,7 +149,9 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        overall_pd_interaction.plot()
+        overall_plot = overall_pd_interaction.plot()
+
+        overall_plot.savefig("test_pd_overall_interaction_mixed.png")
         assert len(overall_pd_interaction.h_scores) == self.x.shape[1]
 
     def test_pd_pairwise_interaction(self):
@@ -162,7 +168,9 @@ class TestPDInteractionDisplayMixed(SMTestCase):
             feature_names=self.feature_names,
             categorical_feature_indices=self.categorical_feature_indices,
         )
-        pairwise_pd_interaction.plot()
+        pairwise_plot = pairwise_pd_interaction.plot()
+
+        pairwise_plot.savefig("test_pd_pairwise_interaction_mixed.png")
         assert len(pairwise_pd_interaction.h_scores) == len(feature_pairs)
 
 
