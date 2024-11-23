@@ -27,6 +27,22 @@ def pd_feature_importance(
     method="uniform",
     ratio_samples=None,
 ):
+    """
+    Computes feature importance based on partial dependence.
+
+    Args:
+        model (object): The model used for predictions.
+        x (numpy.ndarray): Data used for partial dependence computation.
+        features (list): List of feature indices.
+        categorical_feature_indices (list, optional): Indices of categorical features.
+        percentiles (tuple, optional): Percentiles used to compute the grid for continuous features.
+        grid_resolution (int, optional): Number of points in the grid for continuous features.
+        method (str, optional): Method to use for grid computation ('sample', 'unique', or 'uniform').
+        ratio_samples (float, optional): Ratio of samples to use for computing partial dependence.
+
+    Returns:
+        list: Computed feature importances.
+    """
     pd_results = partial_dependence(
         model,
         x,
