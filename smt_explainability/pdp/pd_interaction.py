@@ -1,4 +1,3 @@
-"""Features interaction based on partial dependence"""
 # Authors: Muhammad Daffa Robani
 
 import numpy as np
