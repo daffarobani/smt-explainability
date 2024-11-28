@@ -98,6 +98,12 @@ class SobolIndicesDisplay:
         if order in ["first", "total"]:
             indices = self.feature_names
             values = self.sobol_indices[order]
+
+            if order == "first":
+                ylabel = "First order Sobol indices"
+            else:
+                ylabel = "Total order Sobol indices"
+
         elif order == "second":
             indices = list(self.sobol_indices['second'].keys())
             for i in range(len(indices)):
@@ -108,6 +114,8 @@ class SobolIndicesDisplay:
 
             indices = np.array(indices)
             values = np.array(list(self.sobol_indices['second'].values()))
+
+            ylabel = "Second order Sobol indices"
         else:
             raise ValueError("order must be either 'first', 'total', or 'second'.")
 
@@ -145,7 +153,7 @@ class SobolIndicesDisplay:
         )
         ax.set_xticks(np.arange(len(vis_values)))
         ax.set_xticklabels(vis_indices, fontsize=14)
-        ax.set_ylabel("Sobol indices", fontsize=14)
+        ax.set_ylabel(ylabel, fontsize=14)
         ax.grid(color="black", alpha=0.2)
         ax.yaxis.set_tick_params(labelsize=14)
         ax.set_axisbelow(True)
